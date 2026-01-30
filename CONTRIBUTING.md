@@ -94,18 +94,18 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) f
 
 ### Commit Types
 
-| Type | Description | Release Impact |
-|------|-------------|----------------|
-| `feat` | New feature | 🔼 Minor version |
-| `fix` | Bug fix | 🔼 Patch version |
-| `perf` | Performance improvement | 🔼 Patch version |
-| `refactor` | Code refactoring | 🔼 Patch version |
-| `build` | Build system changes | 🔼 Patch version |
-| `docs` | Documentation only | ⏸️ No release |
-| `ci` | CI/CD changes | ⏸️ No release |
-| `test` | Test changes | ⏸️ No release |
-| `style` | Code style changes | ⏸️ No release |
-| `chore` | Maintenance tasks | ⏸️ No release |
+| Type | Description | Release Impact | Docker Image |
+|------|-------------|----------------|--------------|
+| `feat` | New feature | 🔼 Minor version | ✅ Published |
+| `fix` | Bug fix | 🔼 Patch version | ✅ Published |
+| `perf` | Performance improvement | 🔼 Patch version | ✅ Published |
+| `refactor` | Code refactoring | 🔼 Patch version | ✅ Published |
+| `build` | Build system changes | 🔼 Patch version | ✅ Published |
+| `docs` | Documentation only | ⏸️ No release | ❌ Not published |
+| `ci` | CI/CD changes | ⏸️ No release | ❌ Not published |
+| `test` | Test changes | ⏸️ No release | ❌ Not published |
+| `style` | Code style changes | ⏸️ No release | ❌ Not published |
+| `chore` | Maintenance tasks | ⏸️ No release | ❌ Not published |
 
 ### Required Scopes
 
@@ -223,7 +223,29 @@ Each release includes:
 - 📋 Updated CHANGELOG.md with emoji sections
 - 🏷️ Git tag (e.g., `v1.2.0`)
 - 📦 GitHub Release with release notes
-- 🐳 Docker image (if configured)
+- 🐳 Docker images automatically published to GitHub Container Registry
+  - `ghcr.io/strausmann/dockhand-guardian:latest`
+  - `ghcr.io/strausmann/dockhand-guardian:1.2.0`
+  - `ghcr.io/strausmann/dockhand-guardian:1.2`
+  - `ghcr.io/strausmann/dockhand-guardian:1`
+  - Multi-platform support: `linux/amd64`, `linux/arm64`
+
+### Dependency Updates
+
+Dependabot runs **daily** at 03:00 UTC and checks:
+
+| Ecosystem | Commit Type | Release Impact | Auto-Merge |
+|-----------|-------------|----------------|------------|
+| 🐳 Docker base images | `fix(deps)` | ✅ Patch release + Docker publish | Manual |
+| 🐍 Python packages | `fix(deps)` | ✅ Patch release + Docker publish | Manual |
+| ⚙️ GitHub Actions | `chore(deps)` | ❌ No release | Manual |
+| 📦 npm packages | `chore(deps)` | ❌ No release | Manual |
+
+**Important:** Production-relevant dependency updates (Docker, Python) automatically trigger:
+1. Patch version bump (e.g., `1.2.3` → `1.2.4`)
+2. New GitHub Release
+3. Docker image build and publish to GHCR
+4. Multi-platform builds (amd64 + arm64)
 
 ## 💡 Development Tips
 

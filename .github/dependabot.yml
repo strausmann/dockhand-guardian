@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # Docker dependencies
+  # Docker dependencies - PRODUCTION RELEVANT (triggers releases)
   - package-ecosystem: "docker"
     directory: "/"
     schedule:
@@ -10,11 +10,11 @@ updates:
       - "dependencies"
       - "docker"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "fix(deps)"
       include: "scope"
     open-pull-requests-limit: 5
 
-  # Python dependencies
+  # Python dependencies - PRODUCTION RELEVANT (triggers releases)
   - package-ecosystem: "pip"
     directory: "/"
     schedule:
@@ -24,11 +24,11 @@ updates:
       - "dependencies"
       - "python"
     commit-message:
-      prefix: "chore(deps)"
+      prefix: "fix(deps)"
       include: "scope"
     open-pull-requests-limit: 5
 
-  # GitHub Actions
+  # GitHub Actions - CI only (no releases)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -42,7 +42,7 @@ updates:
       include: "scope"
     open-pull-requests-limit: 5
 
-  # npm dependencies
+  # npm dependencies - Dev tools only (no releases)
   - package-ecosystem: "npm"
     directory: "/"
     schedule:

@@ -33,6 +33,21 @@ Dockhand Guardian is a lightweight Python-based monitoring service that watches 
 
 ## 🚀 Quick Start
 
+### Using Pre-built Docker Image
+
+```bash
+# Pull from GitHub Container Registry
+docker pull ghcr.io/strausmann/dockhand-guardian:latest
+
+# Or use in docker-compose.yml
+services:
+  guardian:
+    image: ghcr.io/strausmann/dockhand-guardian:latest
+    # ... rest of configuration
+```
+
+### Building from Source
+
 1. **Clone the repository**:
    ```bash
    git clone https://github.com/strausmann/dockhand-guardian.git
@@ -179,8 +194,14 @@ See [docker-compose.yml](docker-compose.yml) for a complete example including:
 ## 🏗️ Building the Image
 
 ```bash
+# Local build
 docker build -t dockhand-guardian .
+
+# Multi-platform build (amd64 + arm64)
+docker buildx build --platform linux/amd64,linux/arm64 -t dockhand-guardian .
 ```
+
+Docker images are automatically built and published to [GitHub Container Registry](https://github.com/strausmann/dockhand-guardian/pkgs/container/dockhand-guardian) on every release.
 
 ## 💻 Development
 
@@ -259,11 +280,18 @@ MIT License - see [LICENSE](LICENSE) file for details.
 Contributions are welcome! This project uses:
 - 📝 [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning
 - 🔄 [Semantic Release](https://github.com/semantic-release/semantic-release) for automated releases
+- 🐳 Automatic Docker image publishing to GitHub Container Registry
 - 🎯 Required commit scopes (see [SCOPES.md](.github/SCOPES.md))
 
 **Important:** Not all commits trigger releases:
-- ✅ `feat`, `fix`, `perf`, `refactor`, `build` → **Create releases**
+- ✅ `feat`, `fix`, `perf`, `refactor`, `build` → **Create releases + Docker images**
 - ⏸️ `docs`, `ci`, `test`, `style`, `chore` → **No release** (documentation & tooling only)
+
+**Dependency Updates:**
+- 🐳 Docker base image updates → **Automatic patch release + new Docker image**
+- 🐍 Python package updates → **Automatic patch release + new Docker image**
+- ⚙️ GitHub Actions updates → **No release** (CI tooling only)
+- 📦 npm updates → **No release** (dev tooling only)
 
 For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
 
