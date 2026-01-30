@@ -1,24 +1,37 @@
-# Dockhand Guardian
+# 🛡️ Dockhand Guardian
+
+[![Release](https://img.shields.io/github/v/release/strausmann/dockhand-guardian)](https://github.com/strausmann/dockhand-guardian/releases)
+[![License](https://img.shields.io/github/license/strausmann/dockhand-guardian)](LICENSE)
+[![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
+[![Docker](https://img.shields.io/badge/docker-required-blue.svg)](https://www.docker.com/)
+[![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen)](https://github.com/semantic-release/semantic-release)
+[![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
 A Docker sidecar watchdog that monitors container health and automatically recovers failed containers without requiring an external API.
 
-## Overview
+> [!NOTE]
+> This project is **not officially part of the Dockhand project** and is maintained independently.
+
+> [!TIP]
+> 🤖 **AI-Assisted Development**: This project is developed with assistance from GitHub Copilot, leveraging AI to enhance code quality and development efficiency.
+
+## 📋 Overview
 
 Dockhand Guardian is a lightweight Python-based monitoring service that watches over your Docker containers (specifically `dockhand-app` and `dockhand-database`) via Docker socket. When containers fail health checks for longer than a configured grace period, it automatically triggers a recovery process by pulling the latest images and recreating the containers.
 
-## Features
+## ✨ Features
 
-- **Container Health Monitoring**: Monitors Docker container state and built-in health checks
-- **Optional HTTP Checks**: Additional HTTP endpoint health verification
-- **Grace Period**: Configurable grace period before triggering recovery
-- **Auto-Recovery**: Automatically pulls latest images and recreates containers
-- **Maintenance Mode**: Support for maintenance flag file to pause monitoring
-- **Cooldown Period**: Prevents recovery loops with configurable cooldown
-- **Docker Socket Communication**: Direct communication with Docker daemon (no external API needed)
-- **Webhook Notifications**: Send alerts to Discord, Teams, or generic webhooks when recovery is triggered
-- **Configurable**: All parameters configurable via environment variables
+- 🔍 **Container Health Monitoring**: Monitors Docker container state and built-in health checks
+- 🌐 **Optional HTTP Checks**: Additional HTTP endpoint health verification
+- ⏱️ **Grace Period**: Configurable grace period before triggering recovery
+- 🔄 **Auto-Recovery**: Automatically pulls latest images and recreates containers
+- 🔧 **Maintenance Mode**: Support for maintenance flag file to pause monitoring
+- ⏸️ **Cooldown Period**: Prevents recovery loops with configurable cooldown
+- 🐳 **Docker Socket Communication**: Direct communication with Docker daemon (no external API needed)
+- 📢 **Webhook Notifications**: Send alerts via 80+ services using Apprise (Discord, Teams, Slack, Email, etc.)
+- ⚙️ **Configurable**: All parameters configurable via environment variables
 
-## Quick Start
+## 🚀 Quick Start
 
 1. **Clone the repository**:
    ```bash
@@ -36,7 +49,7 @@ Dockhand Guardian is a lightweight Python-based monitoring service that watches 
    docker compose logs -f guardian
    ```
 
-## Configuration
+## ⚙️ Configuration
 
 All configuration is done via environment variables:
 
@@ -62,7 +75,7 @@ environment:
   HTTP_CHECKS: dockhand-app=http://dockhand-app:80/health
 ```
 
-## Webhook Notifications
+## 📢 Webhook Notifications
 
 Guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting 80+ notification services including Discord, Microsoft Teams, Slack, Telegram, Email, and many more.
 
@@ -128,7 +141,7 @@ Apprise supports 80+ services. See [Apprise documentation](https://github.com/ca
 - Custom JSON endpoints
 - And many more!
 
-## Maintenance Mode
+## 🔧 Maintenance Mode
 
 To pause monitoring during maintenance:
 
@@ -142,7 +155,7 @@ rm .maintenance
 
 When the maintenance file exists in the stack directory, the guardian will skip all health checks.
 
-## How It Works
+## 🔄 How It Works
 
 1. **Monitoring**: Guardian checks each monitored container every `CHECK_INTERVAL` seconds
 2. **Health Checks**:
@@ -155,7 +168,7 @@ When the maintenance file exists in the stack directory, the guardian will skip 
    - Executes `docker compose up -d --force-recreate` to recreate containers
 5. **Cooldown**: After recovery, waits `COOLDOWN_SECONDS` before monitoring again
 
-## Docker Compose Example
+## 📦 Docker Compose Example
 
 See [docker-compose.yml](docker-compose.yml) for a complete example including:
 - Sample application container (nginx)
@@ -163,13 +176,13 @@ See [docker-compose.yml](docker-compose.yml) for a complete example including:
 - Guardian sidecar configuration
 - Proper volume mounts and networking
 
-## Building the Image
+## 🏗️ Building the Image
 
 ```bash
 docker build -t dockhand-guardian .
 ```
 
-## Development
+## 💻 Development
 
 ### Requirements
 
@@ -192,14 +205,31 @@ export STACK_DIR=/path/to/your/stack
 python guardian.py
 ```
 
-## Security Considerations
+### Contributing Guidelines
+
+This project uses semantic versioning and conventional commits:
+
+```bash
+# Install dependencies
+npm install
+
+# Make changes and commit using commitizen
+npm run commit
+
+# Or commit manually with proper format
+git commit -m "feat(monitoring): add new health check type"
+```
+
+See [SCOPES.md](.github/SCOPES.md) for available commit scopes.
+
+## 🔒 Security Considerations
 
 - The guardian requires read access to Docker socket (`/var/run/docker.sock`)
 - Mount the stack directory as read-only (`:ro`) when possible
 - Use Docker secrets for sensitive configuration in production
 - The guardian has permission to recreate containers, so protect access appropriately
 
-## Troubleshooting
+## 🔍 Troubleshooting
 
 ### Guardian not detecting containers
 
@@ -220,14 +250,23 @@ python guardian.py
 - Verify guardian has access to stack directory
 - Check Docker socket permissions on host
 
-## License
+## 📝 License
 
 MIT License - see [LICENSE](LICENSE) file for details.
 
-## Contributing
+## 🤝 Contributing
 
-Contributions are welcome! Please feel free to submit a Pull Request.
+Contributions are welcome! This project uses:
+- 📝 [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning
+- 🔄 [Semantic Release](https://github.com/semantic-release/semantic-release) for automated releases
+- 🎯 Required commit scopes (see [SCOPES.md](.github/SCOPES.md))
 
-## Author
+**Important:** Not all commits trigger releases:
+- ✅ `feat`, `fix`, `perf`, `refactor`, `build` → **Create releases**
+- ⏸️ `docs`, `ci`, `test`, `style`, `chore` → **No release** (documentation & tooling only)
+
+For detailed guidelines, see [CONTRIBUTING.md](CONTRIBUTING.md).
+
+## 👤 Author
 
 Björn Strausmann
