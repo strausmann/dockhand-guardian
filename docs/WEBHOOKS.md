@@ -1,14 +1,18 @@
 # Webhook Documentation
 
-This document describes the webhook notification system in Dockhand Guardian, powered by [Apprise](https://github.com/caronc/apprise).
+This document describes the webhook notification system in Dockhand Guardian, powered by
+[Apprise](https://github.com/caronc/apprise).
 
 ## Overview
 
-Dockhand Guardian uses Apprise to send notifications to 80+ services when recovery actions are triggered. Notifications are sent after both successful and failed recovery attempts.
+Dockhand Guardian uses Apprise to send notifications to 80+ services when recovery actions are
+triggered. Notifications are sent after both successful and failed recovery attempts.
 
 ## Why Apprise?
 
-[Apprise](https://github.com/caronc/apprise) is a mature, well-maintained Python library that provides:
+[Apprise](https://github.com/caronc/apprise) is a mature, well-maintained Python library that
+provides:
+
 - 🎯 **80+ services** supported out of the box
 - 🔧 **Unified API** for all notification services
 - 📝 **URL-based configuration** (simple and portable)
@@ -23,7 +27,7 @@ Configure webhooks via the `WEBHOOK_URLS` environment variable using Apprise URL
 environment:
   # Single service
   WEBHOOK_URLS: discord://webhook_id/webhook_token
-  
+
   # Multiple services (comma-separated)
   WEBHOOK_URLS: discord://ID/TOKEN,msteams://A/B/C/,slack://X/Y/Z/
 ```
@@ -33,6 +37,7 @@ environment:
 ### Discord
 
 **Setup:**
+
 1. Open your Discord server
 2. Go to Server Settings → Integrations
 3. Click "Webhooks" → "New Webhook"
@@ -41,11 +46,13 @@ environment:
 6. Copy the Webhook URL: `https://discord.com/api/webhooks/ID/TOKEN`
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: discord://webhook_id/webhook_token
 ```
 
 **Example:**
+
 ```yaml
 WEBHOOK_URLS: discord://123456789012345678/AbCdEfGhIjKlMnOpQrStUvWxYz1234567890
 ```
@@ -53,6 +60,7 @@ WEBHOOK_URLS: discord://123456789012345678/AbCdEfGhIjKlMnOpQrStUvWxYz1234567890
 ### Microsoft Teams
 
 **Setup:**
+
 1. Open your Teams channel
 2. Click the three dots (•••) → "Connectors"
 3. Search for "Incoming Webhook"
@@ -61,25 +69,30 @@ WEBHOOK_URLS: discord://123456789012345678/AbCdEfGhIjKlMnOpQrStUvWxYz1234567890
 6. Extract tokens from URL
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: msteams://TokenA/TokenB/TokenC/
 ```
 
 **URL Format:** The Teams webhook URL looks like:
+
 ```
 https://outlook.office.com/webhook/GUID@GUID/IncomingWebhook/HASH/GUID
 ```
+
 Convert it to Apprise format by extracting the tokens.
 
 ### Slack
 
 **Setup:**
+
 1. Create a Slack App: https://api.slack.com/apps
 2. Enable "Incoming Webhooks"
 3. Add webhook to workspace
 4. Copy the webhook URL tokens
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: slack://TokenA/TokenB/TokenC/
 ```
@@ -87,11 +100,13 @@ WEBHOOK_URLS: slack://TokenA/TokenB/TokenC/
 ### Email (SMTP)
 
 **Gmail Example:**
+
 ```yaml
 WEBHOOK_URLS: mailto://user:password@gmail.com?to=alerts@example.com
 ```
 
 **Generic SMTP:**
+
 ```yaml
 WEBHOOK_URLS: mailto://user:pass@mail.example.com?smtp=mail.example.com&from=guardian@example.com&to=admin@example.com
 ```
@@ -99,11 +114,13 @@ WEBHOOK_URLS: mailto://user:pass@mail.example.com?smtp=mail.example.com&from=gua
 ### Telegram
 
 **Setup:**
+
 1. Create a bot via [@BotFather](https://t.me/botfather)
 2. Get your chat ID
 3. Use bot token and chat ID
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: tgram://bot_token/chat_id
 ```
@@ -111,6 +128,7 @@ WEBHOOK_URLS: tgram://bot_token/chat_id
 ### Pushover
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: pover://user_key@token
 ```
@@ -118,6 +136,7 @@ WEBHOOK_URLS: pover://user_key@token
 ### Matrix
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: matrix://user:password@hostname/#room
 ```
@@ -127,6 +146,7 @@ WEBHOOK_URLS: matrix://user:password@hostname/#room
 For custom JSON endpoints:
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: json://example.com/endpoint
 # or with headers:
@@ -136,13 +156,16 @@ WEBHOOK_URLS: json://example.com/endpoint?+HeaderKey=value
 ### IFTTT
 
 **Configuration:**
+
 ```yaml
 WEBHOOK_URLS: ifttt://webhook_id/event_name
 ```
 
 ### More Services
 
-Apprise supports many more services. See the [complete list](https://github.com/caronc/apprise/wiki#notification-services):
+Apprise supports many more services. See the
+[complete list](https://github.com/caronc/apprise/wiki#notification-services):
+
 - Gotify
 - Mattermost
 - Rocket.Chat
@@ -172,12 +195,14 @@ All services will receive notifications when recovery is triggered.
 Notifications include:
 
 **Title:**
+
 ```
 ✅ Dockhand Guardian Alert  (success)
 ❌ Dockhand Guardian Alert  (failure)
 ```
 
 **Body:**
+
 ```
 **Recovery Successful**
 
@@ -227,6 +252,7 @@ apprise -t "Test" -b "Message" discord://ID/TOKEN slack://A/B/C/
 ### No notifications received
 
 1. **Check configuration:**
+
    ```bash
    docker compose exec guardian env | grep WEBHOOK
    ```
@@ -237,6 +263,7 @@ apprise -t "Test" -b "Message" discord://ID/TOKEN slack://A/B/C/
    - Slack: `slack://TokenA/TokenB/TokenC/`
 
 3. **Check guardian logs:**
+
    ```bash
    docker compose logs guardian | grep -i webhook
    ```
@@ -254,7 +281,8 @@ apprise -t "Test" -b "Message" discord://ID/TOKEN slack://A/B/C/
 ### Wrong format or service not supported
 
 1. Check [Apprise documentation](https://github.com/caronc/apprise/wiki) for correct URL format
-2. Ensure service is in [supported list](https://github.com/caronc/apprise/wiki#notification-services)
+2. Ensure service is in
+   [supported list](https://github.com/caronc/apprise/wiki#notification-services)
 3. Try using JSON endpoint as fallback for unsupported services
 
 ### Notifications delayed
@@ -278,6 +306,7 @@ environment:
 ```
 
 **apprise.yml:**
+
 ```yaml
 urls:
   - discord://webhook_id/token:
@@ -334,6 +363,7 @@ environment:
 ## Future Enhancements
 
 Potential improvements:
+
 1. **Async delivery** - Non-blocking webhook sends
 2. **Retry logic** - Automatic retries on failure (via Apprise)
 3. **Custom templates** - User-defined message formats
@@ -346,4 +376,3 @@ Potential improvements:
 - [Apprise Documentation](https://github.com/caronc/apprise/wiki)
 - [Supported Services](https://github.com/caronc/apprise/wiki#notification-services)
 - [URL Format Guide](https://github.com/caronc/apprise/wiki#notification-services)
-

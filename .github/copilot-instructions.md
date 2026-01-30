@@ -4,7 +4,8 @@ This document provides guidance for GitHub Copilot when working with the Dockhan
 
 ## Project Overview
 
-Dockhand Guardian is a Docker sidecar watchdog service that monitors container health and performs automatic recovery. It's designed to be simple, reliable, and require minimal configuration.
+Dockhand Guardian is a Docker sidecar watchdog service that monitors container health and performs
+automatic recovery. It's designed to be simple, reliable, and require minimal configuration.
 
 ## Architecture
 
@@ -29,11 +30,13 @@ Dockhand Guardian is a Docker sidecar watchdog service that monitors container h
 ## Key Design Principles
 
 ### 1. Simplicity
+
 - Single Python file for core logic
 - Minimal dependencies (docker SDK, requests, apprise)
 - Configuration via environment variables only
 
 ### 2. Safety
+
 - Grace period prevents premature recovery
 - Cooldown prevents recovery loops
 - Maintenance mode for controlled operations
@@ -41,6 +44,7 @@ Dockhand Guardian is a Docker sidecar watchdog service that monitors container h
 - Webhook notifications for visibility via Apprise
 
 ### 3. Reliability
+
 - Direct Docker socket communication
 - Comprehensive error handling
 - Detailed logging at all stages
@@ -62,6 +66,7 @@ self.webhook_urls = os.getenv('WEBHOOK_URLS', '')
 ```
 
 ### Configuration Guidelines
+
 - Always provide sensible defaults
 - Use type conversion for numeric values
 - Split comma-separated lists for multiple values
@@ -69,7 +74,8 @@ self.webhook_urls = os.getenv('WEBHOOK_URLS', '')
 
 ### Webhook System
 
-The guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting 80+ services when recovery actions are triggered:
+The guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting
+80+ services when recovery actions are triggered:
 
 1. **Discord**: Rich embeds via Apprise Discord integration
 2. **Microsoft Teams**: MessageCard format via Apprise
@@ -78,17 +84,19 @@ The guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notif
 5. **80+ more services**: Telegram, Pushover, Matrix, etc.
 
 Webhooks are configured via URL-based format (Apprise standard):
+
 ```python
 WEBHOOK_URLS=discord://webhook_id/token,mailto://user:pass@host.com
 ```
 
-Webhooks are sent after recovery attempts (both successful and failed) to provide visibility into guardian actions.
+Webhooks are sent after recovery attempts (both successful and failed) to provide visibility into
+guardian actions.
 
 ## Monitoring Logic
 
 ### Health Check Flow
 
-```
+````
 1. Check maintenance mode → Skip if active
 2. Check cooldown → Skip if in cooldown
 3. For each monitored container:
@@ -115,9 +123,10 @@ docker compose pull
 
 # Step 2: Recreate containers
 docker compose up -d --force-recreate
-```
+````
 
 ### Recovery Guidelines
+
 - Always execute both steps
 - Log each step clearly
 - Reset failure tracking after recovery
@@ -156,6 +165,7 @@ docker compose ps
 ## Code Style
 
 ### Python Conventions
+
 - Type hints for function signatures
 - Docstrings for all classes and methods
 - PEP 8 style compliance
@@ -163,6 +173,7 @@ docker compose ps
 - Comprehensive error handling
 
 ### Logging Strategy
+
 - INFO: Normal operations and state changes
 - WARNING: Failures, recovery triggers, important state
 - ERROR: Exceptions and critical failures
@@ -180,6 +191,7 @@ To add a new health check type:
 4. Update documentation
 
 Example:
+
 ```python
 def check_tcp_port(self, container_name: str) -> bool:
     """Check if TCP port is reachable."""
@@ -190,6 +202,7 @@ def check_tcp_port(self, container_name: str) -> bool:
 ### Extending Monitored Containers
 
 Containers are dynamically configured via `MONITORED_CONTAINERS`:
+
 - No code changes needed to monitor different containers
 - Update environment variable in docker-compose.yml
 - Restart guardian service
@@ -197,6 +210,7 @@ Containers are dynamically configured via `MONITORED_CONTAINERS`:
 ### Custom Recovery Actions
 
 To customize recovery process:
+
 1. Modify `recover_stack()` method
 2. Keep two-step structure (pull + recreate)
 3. Maintain logging and error handling
@@ -208,11 +222,12 @@ Critical volume mounts for guardian:
 
 ```yaml
 volumes:
-  - /var/run/docker.sock:/var/run/docker.sock:ro  # Docker API access
-  - .:/stack:ro  # Stack directory for compose commands
+  - /var/run/docker.sock:/var/run/docker.sock:ro # Docker API access
+  - .:/stack:ro # Stack directory for compose commands
 ```
 
 ### Mount Guidelines
+
 - Use read-only (`:ro`) where possible
 - Docker socket typically read-only sufficient
 - Stack directory needs read access to compose file
@@ -220,11 +235,13 @@ volumes:
 ## Security Considerations
 
 ### Permissions Required
+
 - Read access to Docker socket
 - Execute docker CLI commands
 - Read access to stack directory
 
 ### Security Best Practices
+
 - Run as non-root user when possible
 - Use read-only mounts
 - Limit network exposure
@@ -271,6 +288,7 @@ Potential areas for improvement:
 ## Contributing Guidelines
 
 When contributing:
+
 1. Maintain backward compatibility
 2. Add tests for new features
 3. Update documentation
@@ -281,6 +299,7 @@ When contributing:
 ## Agent-Specific Instructions
 
 ### When modifying guardian.py:
+
 - Preserve existing configuration options
 - Maintain backward compatibility
 - Add comprehensive error handling
@@ -288,18 +307,21 @@ When contributing:
 - Update type hints
 
 ### When modifying Dockerfile:
+
 - Keep image size minimal
 - Use official base images
 - Pin version numbers
 - Clean up in same layer
 
 ### When updating documentation:
+
 - Keep README user-focused
 - Keep copilot-instructions.md technical/detailed
 - Update configuration tables
 - Add examples for new features
 
 ### When modifying docker-compose.yml:
+
 - Keep example simple
 - Show best practices
 - Document all options

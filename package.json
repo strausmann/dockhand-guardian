@@ -42,7 +42,6 @@
     "prepare": "husky install",
     "format": "prettier --write \"**/*.{json,yml,yaml,md}\"",
     "format:check": "prettier --check \"**/*.{json,yml,yaml,md}\""
-    "prepare": "husky install"
   },
   "publishConfig": {
     "access": "public"

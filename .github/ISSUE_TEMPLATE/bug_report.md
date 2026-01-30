@@ -1,27 +1,31 @@
 ---
 name: Bug Report
 about: Erstelle einen Bug Report um Dockhand Guardian zu verbessern
-title: '[BUG] '
+title: "[BUG] "
 labels: bug
-assignees: ''
-
+assignees: ""
 ---
 
 ## Beschreibung
+
 <!-- Eine klare und prägnante Beschreibung des Bugs -->
 
 ## Schritte zur Reproduktion
+
 1. Gehe zu '...'
 2. Führe aus '...'
 3. Beobachte Fehler '...'
 
 ## Erwartetes Verhalten
+
 <!-- Was sollte stattdessen passieren? -->
 
 ## Aktuelles Verhalten
+
 <!-- Was passiert tatsächlich? -->
 
 ## Screenshots/Logs
+
 <!-- Falls zutreffend, füge Screenshots oder Logs hinzu -->
 
 ```
@@ -29,6 +33,7 @@ assignees: ''
 ```
 
 ## Umgebung
+
 - **OS**: [z.B. Ubuntu 22.04]
 - **Docker Version**: [z.B. 24.0.7]
 - **Docker Compose Version**: [z.B. 2.23.0]
@@ -36,6 +41,7 @@ assignees: ''
 - **Python Version**: [z.B. 3.11]
 
 ## Konfiguration
+
 <!-- Relevante Umgebungsvariablen (entferne sensible Daten) -->
 
 ```yaml
@@ -46,4 +52,5 @@ CHECK_INTERVAL: "..."
 ```
 
 ## Zusätzlicher Kontext
+
 <!-- Weitere Informationen zum Problem -->

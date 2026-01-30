@@ -1,9 +1,11 @@
 # Pull Request
 
 ## Beschreibung
+
 <!-- Beschreibe deine Änderungen -->
 
 ## Typ der Änderung
+
 <!-- Setze ein [x] bei zutreffenden Punkten -->
 
 - [ ] Bug Fix (non-breaking change)
@@ -14,13 +16,15 @@
 - [ ] Performance Verbesserung
 
 ## Änderungen
+
 <!-- Liste die wichtigsten Änderungen auf -->
 
-- 
-- 
-- 
+-
+-
+-
 
 ## Tests
+
 <!-- Beschreibe die durchgeführten Tests -->
 
 - [ ] Manuelle Tests durchgeführt
@@ -38,10 +42,13 @@
 - [ ] Commit Messages folgen Conventional Commits Format
 
 ## Breaking Changes
+
 <!-- Falls zutreffend, beschreibe Breaking Changes -->
 
 ## Screenshots/Logs
+
 <!-- Falls zutreffend, füge Screenshots oder Logs hinzu -->
 
 ## Verwandte Issues
+
 <!-- Referenziere verwandte Issues: Fixes #123, Closes #456 -->

@@ -2,23 +2,24 @@
 
 ## Scope-Übersicht
 
-Dockhand Guardian verwendet spezifische Scopes in Commit-Messages, um Änderungen klar zu kategorisieren. Jeder Commit MUSS einen Scope haben.
+Dockhand Guardian verwendet spezifische Scopes in Commit-Messages, um Änderungen klar zu
+kategorisieren. Jeder Commit MUSS einen Scope haben.
 
 ### Verfügbare Scopes
 
-| Scope | Beschreibung | Beispiele |
-|-------|-------------|-----------|
-| `guardian` | Änderungen an der Guardian-Hauptlogik | Monitoring-Logik, Zustandsverwaltung |
-| `docker` | Docker-spezifische Anpassungen | Dockerfile, Docker-Konfiguration |
-| `compose` | Docker Compose Konfiguration | docker-compose.yml Änderungen |
-| `webhook` | Webhook/Benachrichtigungssystem | Apprise-Integration, Notification-Logik |
-| `monitoring` | Health-Check Funktionalität | HTTP-Checks, Container-Status |
-| `recovery` | Recovery-Mechanismen | Stack-Neustart, Pull-Logik |
-| `ci` | CI/CD Pipeline Änderungen | GitHub Actions, Test-Workflows |
-| `deps` | Dependency Updates | requirements.txt, npm Pakete |
-| `docs` | Dokumentation | README, Inline-Dokumentation |
-| `config` | Konfigurationsoptionen | Umgebungsvariablen, Settings |
-| `release` | Release Management | Semantic-Release, Versioning |
+| Scope        | Beschreibung                          | Beispiele                               |
+| ------------ | ------------------------------------- | --------------------------------------- |
+| `guardian`   | Änderungen an der Guardian-Hauptlogik | Monitoring-Logik, Zustandsverwaltung    |
+| `docker`     | Docker-spezifische Anpassungen        | Dockerfile, Docker-Konfiguration        |
+| `compose`    | Docker Compose Konfiguration          | docker-compose.yml Änderungen           |
+| `webhook`    | Webhook/Benachrichtigungssystem       | Apprise-Integration, Notification-Logik |
+| `monitoring` | Health-Check Funktionalität           | HTTP-Checks, Container-Status           |
+| `recovery`   | Recovery-Mechanismen                  | Stack-Neustart, Pull-Logik              |
+| `ci`         | CI/CD Pipeline Änderungen             | GitHub Actions, Test-Workflows          |
+| `deps`       | Dependency Updates                    | requirements.txt, npm Pakete            |
+| `docs`       | Dokumentation                         | README, Inline-Dokumentation            |
+| `config`     | Konfigurationsoptionen                | Umgebungsvariablen, Settings            |
+| `release`    | Release Management                    | Semantic-Release, Versioning            |
 
 ## Entscheidungsbaum
 

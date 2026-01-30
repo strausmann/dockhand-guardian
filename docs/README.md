@@ -7,17 +7,21 @@
 [![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
-A Docker sidecar watchdog that monitors container health and automatically recovers failed containers without requiring an external API.
+A Docker sidecar watchdog that monitors container health and automatically recovers failed
+containers without requiring an external API.
 
-> [!NOTE]
-> This project is **not officially part of the Dockhand project** and is maintained independently.
+> [!NOTE] This project is **not officially part of the Dockhand project** and is maintained
+> independently.
 
-> [!TIP]
-> 🤖 **AI-Assisted Development**: This project is developed with assistance from GitHub Copilot, leveraging AI to enhance code quality and development efficiency.
+> [!TIP] 🤖 **AI-Assisted Development**: This project is developed with assistance from GitHub
+> Copilot, leveraging AI to enhance code quality and development efficiency.
 
 ## 📋 Overview
 
-Dockhand Guardian is a lightweight Python-based monitoring service that watches over your Docker containers (specifically `dockhand-app` and `dockhand-database`) via Docker socket. When containers fail health checks for longer than a configured grace period, it automatically triggers a recovery process by pulling the latest images and recreating the containers.
+Dockhand Guardian is a lightweight Python-based monitoring service that watches over your Docker
+containers (specifically `dockhand-app` and `dockhand-database`) via Docker socket. When containers
+fail health checks for longer than a configured grace period, it automatically triggers a recovery
+process by pulling the latest images and recreating the containers.
 
 ## 📁 Project Structure
 
@@ -52,7 +56,8 @@ dockhand-guardian/
     └── .releaserc.json     # Release automation
 ```
 
-> **Note:** Important files (README, Dockerfile, docker-compose.yml, CHANGELOG) are symlinked to the root for convenience and GitHub compatibility.
+> **Note:** Important files (README, Dockerfile, docker-compose.yml, CHANGELOG) are symlinked to the
+> root for convenience and GitHub compatibility.
 
 ## ✨ Features
 
@@ -62,8 +67,10 @@ dockhand-guardian/
 - 🔄 **Auto-Recovery**: Automatically pulls latest images and recreates containers
 - 🔧 **Maintenance Mode**: Support for maintenance flag file to pause monitoring
 - ⏸️ **Cooldown Period**: Prevents recovery loops with configurable cooldown
-- 🐳 **Docker Socket Communication**: Direct communication with Docker daemon (no external API needed)
-- 📢 **Webhook Notifications**: Send alerts via 80+ services using Apprise (Discord, Teams, Slack, Email, etc.)
+- 🐳 **Docker Socket Communication**: Direct communication with Docker daemon (no external API
+  needed)
+- 📢 **Webhook Notifications**: Send alerts via 80+ services using Apprise (Discord, Teams, Slack,
+  Email, etc.)
 - ⚙️ **Configurable**: All parameters configurable via environment variables
 
 ## 🚀 Quick Start
@@ -84,12 +91,14 @@ services:
 ### Building from Source
 
 1. **Clone the repository**:
+
    ```bash
    git clone https://github.com/strausmann/dockhand-guardian.git
    cd dockhand-guardian
    ```
 
 2. **Build and start the stack**:
+
    ```bash
    docker compose up -d
    ```
@@ -103,16 +112,16 @@ services:
 
 All configuration is done via environment variables:
 
-| Variable | Description | Default |
-|----------|-------------|---------|
-| `MONITORED_CONTAINERS` | Comma-separated list of container names to monitor | `dockhand-app,dockhand-database` |
-| `GRACE_SECONDS` | Time in seconds to wait before triggering recovery | `300` |
-| `CHECK_INTERVAL` | How often to check container health (seconds) | `30` |
-| `COOLDOWN_SECONDS` | Cooldown period after recovery (seconds) | `600` |
-| `STACK_DIR` | Directory containing docker-compose.yml | `/stack` |
-| `MAINTENANCE_FILE` | Maintenance mode flag file name | `.maintenance` |
-| `HTTP_CHECKS` | Optional HTTP checks (format: `container=url,container2=url2`) | _(empty)_ |
-| `WEBHOOK_URLS` | Webhook URLs for notifications (comma-separated Apprise URLs) | _(empty)_ |
+| Variable               | Description                                                    | Default                          |
+| ---------------------- | -------------------------------------------------------------- | -------------------------------- |
+| `MONITORED_CONTAINERS` | Comma-separated list of container names to monitor             | `dockhand-app,dockhand-database` |
+| `GRACE_SECONDS`        | Time in seconds to wait before triggering recovery             | `300`                            |
+| `CHECK_INTERVAL`       | How often to check container health (seconds)                  | `30`                             |
+| `COOLDOWN_SECONDS`     | Cooldown period after recovery (seconds)                       | `600`                            |
+| `STACK_DIR`            | Directory containing docker-compose.yml                        | `/stack`                         |
+| `MAINTENANCE_FILE`     | Maintenance mode flag file name                                | `.maintenance`                   |
+| `HTTP_CHECKS`          | Optional HTTP checks (format: `container=url,container2=url2`) | _(empty)_                        |
+| `WEBHOOK_URLS`         | Webhook URLs for notifications (comma-separated Apprise URLs)  | _(empty)_                        |
 
 ### Example Configuration
 
@@ -127,7 +136,8 @@ environment:
 
 ## 📢 Webhook Notifications
 
-Guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting 80+ notification services including Discord, Microsoft Teams, Slack, Telegram, Email, and many more.
+Guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting 80+
+notification services including Discord, Microsoft Teams, Slack, Telegram, Email, and many more.
 
 ### Quick Setup
 
@@ -137,7 +147,7 @@ Configure notifications via Apprise URLs:
 environment:
   # Single service
   WEBHOOK_URLS: discord://webhook_id/webhook_token
-  
+
   # Multiple services (comma-separated)
   WEBHOOK_URLS: discord://webhook_id/token,mailto://user:pass@gmail.com
 ```
@@ -182,7 +192,9 @@ WEBHOOK_URLS: discord://ID/TOKEN,msteams://A/B/C/,slack://X/Y/Z/
 
 ### More Services
 
-Apprise supports 80+ services. See [Apprise documentation](https://github.com/caronc/apprise/wiki) for all supported URLs:
+Apprise supports 80+ services. See [Apprise documentation](https://github.com/caronc/apprise/wiki)
+for all supported URLs:
+
 - Email (SMTP, Gmail, etc.)
 - Telegram
 - Matrix
@@ -212,7 +224,8 @@ When the maintenance file exists in the stack directory, the guardian will skip 
    - Verifies container is running
    - Checks Docker health status (if configured)
    - Optionally checks HTTP endpoints
-3. **Grace Period**: If a container fails checks, guardian waits `GRACE_SECONDS` before taking action
+3. **Grace Period**: If a container fails checks, guardian waits `GRACE_SECONDS` before taking
+   action
 4. **Recovery**: After grace period expires:
    - Executes `docker compose pull` to get latest images
    - Executes `docker compose up -d --force-recreate` to recreate containers
@@ -221,6 +234,7 @@ When the maintenance file exists in the stack directory, the guardian will skip 
 ## 📦 Docker Compose Example
 
 See [docker-compose.yml](docker-compose.yml) for a complete example including:
+
 - Sample application container (nginx)
 - Sample database container (PostgreSQL)
 - Guardian sidecar configuration
@@ -236,7 +250,9 @@ docker build -t dockhand-guardian .
 docker buildx build --platform linux/amd64,linux/arm64 -t dockhand-guardian .
 ```
 
-Docker images are automatically built and published to [GitHub Container Registry](https://github.com/strausmann/dockhand-guardian/pkgs/container/dockhand-guardian) on every release.
+Docker images are automatically built and published to
+[GitHub Container Registry](https://github.com/strausmann/dockhand-guardian/pkgs/container/dockhand-guardian)
+on every release.
 
 ## 💻 Development
 
@@ -313,16 +329,19 @@ MIT License - see [LICENSE](LICENSE) file for details.
 ## 🤝 Contributing
 
 Contributions are welcome! This project uses:
+
 - 📝 [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning
 - 🔄 [Semantic Release](https://github.com/semantic-release/semantic-release) for automated releases
 - 🐳 Automatic Docker image publishing to GitHub Container Registry
 - 🎯 Required commit scopes (see [SCOPES.md](.github/SCOPES.md))
 
 **Important:** Not all commits trigger releases:
+
 - ✅ `feat`, `fix`, `perf`, `refactor`, `build` → **Create releases + Docker images**
 - ⏸️ `docs`, `ci`, `test`, `style`, `chore` → **No release** (documentation & tooling only)
 
 **Dependency Updates:**
+
 - 🐳 Docker base image updates → **Automatic patch release + new Docker image**
 - 🐍 Python package updates → **Automatic patch release + new Docker image**
 - ⚙️ GitHub Actions updates → **No release** (CI tooling only)

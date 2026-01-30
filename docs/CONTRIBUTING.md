@@ -1,6 +1,7 @@
 # 🤝 Contributing to Dockhand Guardian
 
-Thank you for your interest in contributing to Dockhand Guardian! This document provides guidelines and instructions for contributing.
+Thank you for your interest in contributing to Dockhand Guardian! This document provides guidelines
+and instructions for contributing.
 
 ## 📋 Table of Contents
 
@@ -13,7 +14,8 @@ Thank you for your interest in contributing to Dockhand Guardian! This document 
 
 ## 📜 Code of Conduct
 
-This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) Code of Conduct. By participating, you are expected to uphold this code.
+This project follows the [Contributor Covenant](https://www.contributor-covenant.org/) Code of
+Conduct. By participating, you are expected to uphold this code.
 
 ## 🚀 Getting Started
 
@@ -74,7 +76,8 @@ dockhand-guardian/
 
 ### Key Points
 
-- **Symlinks in root**: README, CHANGELOG, Dockerfile, docker-compose.yml link to their actual locations
+- **Symlinks in root**: README, CHANGELOG, Dockerfile, docker-compose.yml link to their actual
+  locations
 - **No code in root**: All application code is in `src/`
 - **Tests separate**: All tests in dedicated `tests/` directory
 - **Docker isolated**: Build files in `docker/` directory
@@ -132,7 +135,8 @@ make check
 
 ## 📝 Commit Guidelines
 
-This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated versioning and changelog generation.
+This project uses [Conventional Commits](https://www.conventionalcommits.org/) for automated
+versioning and changelog generation.
 
 ### Commit Format
 
@@ -146,22 +150,23 @@ This project uses [Conventional Commits](https://www.conventionalcommits.org/) f
 
 ### Commit Types
 
-| Type | Description | Release Impact | Docker Image |
-|------|-------------|----------------|--------------|
-| `feat` | New feature | 🔼 Minor version | ✅ Published |
-| `fix` | Bug fix | 🔼 Patch version | ✅ Published |
-| `perf` | Performance improvement | 🔼 Patch version | ✅ Published |
-| `refactor` | Code refactoring | 🔼 Patch version | ✅ Published |
-| `build` | Build system changes | 🔼 Patch version | ✅ Published |
-| `docs` | Documentation only | ⏸️ No release | ❌ Not published |
-| `ci` | CI/CD changes | ⏸️ No release | ❌ Not published |
-| `test` | Test changes | ⏸️ No release | ❌ Not published |
-| `style` | Code style changes | ⏸️ No release | ❌ Not published |
-| `chore` | Maintenance tasks | ⏸️ No release | ❌ Not published |
+| Type       | Description             | Release Impact   | Docker Image     |
+| ---------- | ----------------------- | ---------------- | ---------------- |
+| `feat`     | New feature             | 🔼 Minor version | ✅ Published     |
+| `fix`      | Bug fix                 | 🔼 Patch version | ✅ Published     |
+| `perf`     | Performance improvement | 🔼 Patch version | ✅ Published     |
+| `refactor` | Code refactoring        | 🔼 Patch version | ✅ Published     |
+| `build`    | Build system changes    | 🔼 Patch version | ✅ Published     |
+| `docs`     | Documentation only      | ⏸️ No release    | ❌ Not published |
+| `ci`       | CI/CD changes           | ⏸️ No release    | ❌ Not published |
+| `test`     | Test changes            | ⏸️ No release    | ❌ Not published |
+| `style`    | Code style changes      | ⏸️ No release    | ❌ Not published |
+| `chore`    | Maintenance tasks       | ⏸️ No release    | ❌ Not published |
 
 ### Required Scopes
 
-Every commit **must** include a scope. See [.github/SCOPES.md](.github/SCOPES.md) for available scopes:
+Every commit **must** include a scope. See [.github/SCOPES.md](.github/SCOPES.md) for available
+scopes:
 
 - `guardian` - Core guardian logic
 - `docker` - Docker-related changes
@@ -209,6 +214,7 @@ BREAKING CHANGE: MONITORED_CONTAINERS now uses semicolon separator instead of co
 ## 🔄 Pull Request Process
 
 1. **Create a feature branch** from `main`:
+
    ```bash
    git checkout -b feat/my-new-feature
    ```
@@ -218,12 +224,14 @@ BREAKING CHANGE: MONITORED_CONTAINERS now uses semicolon separator instead of co
 3. **Update documentation** if needed (README.md, WEBHOOKS.md, etc.)
 
 4. **Test your changes**:
+
    ```bash
    make check
    pytest
    ```
 
 5. **Push to your fork**:
+
    ```bash
    git push origin feat/my-new-feature
    ```
@@ -243,7 +251,8 @@ BREAKING CHANGE: MONITORED_CONTAINERS now uses semicolon separator instead of co
 
 ## 🚢 Release Process
 
-This project uses [semantic-release](https://github.com/semantic-release/semantic-release) for automated versioning and releases.
+This project uses [semantic-release](https://github.com/semantic-release/semantic-release) for
+automated versioning and releases.
 
 ### Automated Releases
 
@@ -256,6 +265,7 @@ This project uses [semantic-release](https://github.com/semantic-release/semanti
 ### What Gets Released
 
 Only commits with these types trigger releases:
+
 - ✅ `feat` - New features
 - ✅ `fix` - Bug fixes
 - ✅ `perf` - Performance improvements
@@ -263,6 +273,7 @@ Only commits with these types trigger releases:
 - ✅ `build` - Build system changes
 
 These types do **NOT** trigger releases:
+
 - ⏸️ `docs` - Documentation changes
 - ⏸️ `ci` - CI/CD workflow changes
 - ⏸️ `test` - Test changes
@@ -272,6 +283,7 @@ These types do **NOT** trigger releases:
 ### Release Contents
 
 Each release includes:
+
 - 📋 Updated CHANGELOG.md with emoji sections
 - 🏷️ Git tag (e.g., `v1.2.0`)
 - 📦 GitHub Release with release notes
@@ -286,19 +298,21 @@ Each release includes:
 
 Dependabot runs **daily** at 03:00 UTC and checks:
 
-| Ecosystem | Commit Type | Release Impact | Auto-Merge |
-|-----------|-------------|----------------|------------|
-| 🐳 Docker base images | `fix(deps)` | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
-| 🐍 Python packages | `fix(deps)` | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
-| ⚙️ GitHub Actions | `chore(deps)` | ❌ No release | ✅ Patch/Minor only |
-| 📦 npm packages | `chore(deps)` | ❌ No release | ✅ Patch/Minor only |
+| Ecosystem             | Commit Type   | Release Impact                    | Auto-Merge          |
+| --------------------- | ------------- | --------------------------------- | ------------------- |
+| 🐳 Docker base images | `fix(deps)`   | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
+| 🐍 Python packages    | `fix(deps)`   | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
+| ⚙️ GitHub Actions     | `chore(deps)` | ❌ No release                     | ✅ Patch/Minor only |
+| 📦 npm packages       | `chore(deps)` | ❌ No release                     | ✅ Patch/Minor only |
 
 **Automatic Merge Behavior:**
+
 - ✅ **Patch updates** (1.2.3 → 1.2.4): Auto-approved and auto-merged after CI passes
 - ✅ **Minor updates** (1.2.0 → 1.3.0): Auto-approved and auto-merged after CI passes
 - ⚠️ **Major updates** (1.0.0 → 2.0.0): Requires manual review (potential breaking changes)
 
 **Important:** Production-relevant dependency updates (Docker, Python) automatically trigger:
+
 1. Patch version bump (e.g., `1.2.3` → `1.2.4`)
 2. New GitHub Release
 3. Docker image build and publish to GHCR
@@ -350,6 +364,7 @@ rm .maintenance
 Use the [Bug Report](.github/ISSUE_TEMPLATE/bug_report.md) template when filing issues.
 
 Include:
+
 - Guardian version
 - Docker version
 - Python version
@@ -362,6 +377,7 @@ Include:
 Use the [Feature Request](.github/ISSUE_TEMPLATE/feature_request.md) template.
 
 Describe:
+
 - Use case and problem to solve
 - Proposed solution
 - Alternative solutions considered
@@ -377,6 +393,7 @@ Describe:
 ## 🙏 Recognition
 
 Contributors will be recognized in:
+
 - GitHub contributors list
 - Release notes (for significant contributions)
 - Future CONTRIBUTORS.md file
@@ -384,6 +401,7 @@ Contributors will be recognized in:
 ## 📧 Questions?
 
 If you have questions about contributing, feel free to:
+
 - Open a [Discussion](https://github.com/strausmann/dockhand-guardian/discussions)
 - Comment on an existing issue
 - Reach out to the maintainer

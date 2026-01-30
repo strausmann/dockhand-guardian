@@ -55,4 +55,3 @@ updates:
       prefix: "chore(deps)"
       include: "scope"
     open-pull-requests-limit: 5
-

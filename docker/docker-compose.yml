@@ -41,42 +41,42 @@ services:
     environment:
       # Containers to monitor (comma-separated)
       MONITORED_CONTAINERS: dockhand-app,dockhand-database
-      
+
       # Time in seconds to wait before triggering recovery (default: 300)
       GRACE_SECONDS: 300
-      
+
       # How often to check container health in seconds (default: 30)
       CHECK_INTERVAL: 30
-      
+
       # Cooldown period in seconds after recovery (default: 600)
       COOLDOWN_SECONDS: 600
-      
+
       # Directory containing docker-compose.yml (mounted as volume)
       STACK_DIR: /stack
-      
+
       # Maintenance mode flag file name (default: .maintenance)
       MAINTENANCE_FILE: .maintenance
-      
+
       # Optional HTTP health checks (format: container=url,container2=url2)
       # HTTP_CHECKS: dockhand-app=http://dockhand-app:80/health
-      
+
       # Webhook notifications via Apprise (80+ services supported)
       # Single service:
       # WEBHOOK_URLS: discord://webhook_id/webhook_token
       # Multiple services (comma-separated):
       # WEBHOOK_URLS: discord://ID/TOKEN,msteams://A/B/C/
       # See: https://github.com/caronc/apprise/wiki
-    
+
     volumes:
       # Mount Docker socket to communicate with Docker daemon
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      
+
       # Mount the directory containing docker-compose.yml for recovery
       - .:/stack:ro
-    
+
     networks:
       - dockhand-net
-    
+
     depends_on:
       - dockhand-app
       - dockhand-database
