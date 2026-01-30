@@ -5,6 +5,12 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.5](https://github.com/strausmann/dockhand-guardian/compare/v1.6.4...v1.6.5) (2026-01-30)
+
+### 📦 Build System
+
+* **deps:** update semantic-release ecosystem to latest versions ([4b57de6](https://github.com/strausmann/dockhand-guardian/commit/4b57de69657dfc8aae6c10cbfbd23c8b784b2823))
+
 ## [1.6.4](https://github.com/strausmann/dockhand-guardian/compare/v1.6.3...v1.6.4) (2026-01-30)
 
 
