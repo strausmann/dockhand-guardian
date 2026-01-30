@@ -296,6 +296,172 @@ When contributing:
 5. Add logging for new operations
 6. Handle errors gracefully
 
+## Development Workflow
+
+### Modern Python Tooling (2025+)
+
+This project uses modern Python standards and tooling:
+
+- **pyproject.toml**: PEP 621 compliant project configuration (replaces setup.py/requirements.txt)
+- **Ruff v0.14.14**: Ultra-fast linter and formatter (10-100x faster than flake8/black/isort)
+- **mypy v1.19.1**: Static type checking with modern type hints (dict, list, X|None)
+- **pre-commit**: Automated Git hooks that run on every commit
+- **pytest + pytest-cov**: Testing with coverage reporting
+- **prettier**: YAML/JSON/Markdown formatting
+
+### Commit Workflow
+
+All commits MUST follow [Conventional Commits](https://www.conventionalcommits.org/) with required
+scopes:
+
+```bash
+<type>(<scope>): <subject>
+```
+
+**Available commit types:**
+
+- `feat`, `fix`, `perf`, `refactor`, `build` → Create releases + Docker images
+- `docs`, `ci`, `test`, `style`, `chore` → No release (dev/docs only)
+
+**Required scopes** (see `.commitlintrc.json`):
+
+- `guardian`, `docker`, `compose`, `webhook`, `monitoring`, `recovery`
+- `ci`, `deps`, `docs`, `config`, `release`
+
+**Commitizen with scope selection:** The project uses `cz-customizable` (not
+`cz-conventional-changelog`) for interactive commits with dropdown scope selection:
+
+```bash
+# Use commitizen with automatic quality checks
+make commit
+
+# Configuration files:
+# - .czrc → Points to cz-customizable adapter
+# - .cz-config.js → Defines types, scopes, scopeOverrides
+# - package.json → No commitizen config (moved to .czrc)
+```
+
+**Scope filtering by type:**
+
+- `feat` → Only shows: guardian, webhook, monitoring, recovery
+- `fix` → Shows all scopes
+- `ci` → Only shows: ci
+
+See [.github/SCOPES.md](.github/SCOPES.md) for detailed type+scope combinations with 140+ examples.
+
+### Pre-Commit Hooks
+
+**Every commit automatically runs `make check`** via pre-commit hooks (`.pre-commit-config.yaml`):
+
+1. **make check hook** (runs first):
+   - Ruff linting (`ruff check`)
+   - Ruff + prettier formatting checks
+   - mypy type checking
+   - Full pytest test suite
+2. Additional validators (trailing whitespace, YAML/JSON syntax, etc.)
+
+**This means:**
+
+- ✅ `git commit -m "..."` → Runs full test suite automatically
+- ✅ `make commit` → Runs tests twice (once in pre-commit, once in npm script)
+- ❌ No commit possible without passing all tests
+
+**Configuration:**
+
+```yaml
+# .pre-commit-config.yaml (simplified structure)
+repos:
+  - repo: local
+    hooks:
+      - id: make-check
+        entry: make check # Runs all quality checks
+        always_run: true
+```
+
+### Makefile Commands
+
+Comprehensive development commands via Makefile:
+
+**Quality Checks:**
+
+```bash
+make check           # All checks (lint + format + type + test)
+make lint            # Ruff linting only
+make format          # Auto-fix formatting
+make format-check    # Check formatting without fixing
+make type-check      # mypy type checking
+make test            # pytest with coverage
+make coverage        # Test coverage + open HTML report
+```
+
+**Git Workflow:**
+
+```bash
+make commit          # Interactive commit with commitizen + quality checks
+make amend           # Add changes to last commit (git add -A && git commit --amend --no-edit)
+make push            # Pull with rebase + push (safe)
+make diff            # Show unstaged changes
+make log             # Pretty git log
+make sync            # Fetch + show status
+```
+
+**CI/Workflow Validation:**
+
+```bash
+make validate-commit    # Validate commit message (commitlint)
+make validate-workflows # Check workflow YAML syntax
+make ci-local           # Run all CI checks locally
+make ci-status          # Show GitHub Actions status (last 10 runs)
+make ci-logs            # Show logs from latest workflow
+make ci-watch           # Watch currently running workflows
+```
+
+**Docker:**
+
+```bash
+make build           # Build Docker image
+make docker-up       # Start containers
+make docker-down     # Stop containers
+make docker-logs     # View guardian logs
+make docker-clean    # Clean old images/volumes
+```
+
+### Local Development Setup
+
+```bash
+# Install all dependencies (Python + npm + pre-commit hooks)
+make install
+
+# Update all dependencies
+make update
+
+# Verify setup
+make check
+```
+
+**DevContainer:** The `.devcontainer/devcontainer.json` automatically runs:
+
+```json
+"postCreateCommand": "pip3 install -e .[dev] && pre-commit install && npm install && npm run prepare"
+```
+
+This ensures pre-commit hooks (including `make check`) are active immediately.
+
+### CI/CD Integration
+
+**GitHub Actions Workflows:**
+
+1. **lint.yml**: Runs on all PRs (ruff, mypy, prettier, commitlint)
+2. **test.yml**: Runs pytest on all pushes
+3. **release.yml**: Semantic-release + Docker build on main branch
+4. **docker-publish.yml**: Multi-platform Docker images (amd64, arm64)
+
+**Semantic Versioning:**
+
+- Commits with `feat/fix/perf/refactor/build` trigger releases
+- Version tags: `latest`, `X.X.X`, `X.X`, `X` (e.g., v1.5.0 → 1.5.0, 1.5, 1)
+- Docker images published to ghcr.io/strausmann/dockhand-guardian
+
 ## Agent-Specific Instructions
 
 ### When modifying guardian.py:
