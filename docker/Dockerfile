@@ -1,5 +1,15 @@
 FROM python:3.11-slim
 
+# OCI Image Labels
+LABEL org.opencontainers.image.title="Dockhand Guardian"
+LABEL org.opencontainers.image.description="Docker sidecar watchdog service for automatic container recovery"
+LABEL org.opencontainers.image.authors="Björn Strausmann"
+LABEL org.opencontainers.image.url="https://github.com/strausmann/dockhand-guardian"
+LABEL org.opencontainers.image.documentation="https://github.com/strausmann/dockhand-guardian#readme"
+LABEL org.opencontainers.image.source="https://github.com/strausmann/dockhand-guardian"
+LABEL org.opencontainers.image.licenses="MIT"
+# Version, created, and revision are set dynamically during build via --build-arg
+
 # Install curl for downloading docker-compose
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \

@@ -21,6 +21,7 @@ automatic recovery. It's designed to be simple, reliable, and require minimal co
    - Based on Python 3.11-slim
    - Includes Docker CLI and docker-compose plugin
    - Installs Python dependencies
+   - OCI-compliant image labels for GitHub Container Registry
 
 3. **docker-compose.yml**: Example deployment configuration
    - Shows how to deploy guardian as a sidecar
