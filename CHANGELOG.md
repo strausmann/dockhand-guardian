@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0](https://github.com/strausmann/dockhand-guardian/compare/v1.2.0...v1.3.0) (2026-01-30)
+
+
+### ✨ Features
+
+* **ci:** enable automatic merging of dependabot PRs ([3a45b21](https://github.com/strausmann/dockhand-guardian/commit/3a45b2169b56c8bd9234f3721d43243ef78bb92d))
+
 ## [1.2.0](https://github.com/strausmann/dockhand-guardian/compare/v1.1.0...v1.2.0) (2026-01-30)
 
 
