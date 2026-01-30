@@ -38,6 +38,162 @@ kategorisieren. Jeder Commit MUSS einen Scope haben.
 └─ Release/Versioning? → release
 ```
 
+## Type + Scope Kombinationen
+
+Je nach Commit-Type sind unterschiedliche Scopes sinnvoll:
+
+### `feat` (Neue Features)
+
+Hauptsächlich für Feature-Code, nicht für Infrastruktur:
+
+- ✅ `guardian` - Neue Guardian-Features
+- ✅ `webhook` - Neue Notification-Features
+- ✅ `monitoring` - Neue Health-Check-Features
+- ✅ `recovery` - Neue Recovery-Mechanismen
+- ⚠️ Andere Scopes möglich, aber seltener
+
+**Beispiele:**
+
+```bash
+feat(guardian): add maintenance mode support
+feat(webhook): integrate Telegram notifications via Apprise
+feat(monitoring): add TCP port health checks
+feat(recovery): implement graceful shutdown handling
+```
+
+### `fix` (Bugfixes)
+
+Kann alle Scopes betreffen:
+
+- ✅ `guardian` - Bugfixes in Core-Logik
+- ✅ `docker` - Docker-Build/-Runtime Fixes
+- ✅ `compose` - Docker Compose Konfigurationsfixes
+- ✅ `webhook` - Notification-Bugs
+- ✅ `monitoring` - Health-Check Fehler
+- ✅ `recovery` - Recovery-Probleme
+
+**Beispiele:**
+
+```bash
+fix(guardian): prevent duplicate recovery attempts
+fix(docker): correct volume mount permissions
+fix(compose): fix healthcheck interval syntax
+fix(webhook): handle webhook timeout errors correctly
+fix(monitoring): fix HTTP check timeout handling
+fix(recovery): prevent recovery during cooldown period
+```
+
+### `docs` (Dokumentation)
+
+Nutze entsprechenden Scope für dokumentierten Bereich:
+
+- ✅ `docs` - Allgemeine/Projekt-Dokumentation
+- ✅ `guardian`, `webhook`, etc. - Feature-spezifische Docs
+
+**Beispiele:**
+
+```bash
+docs(docs): update README with new deployment examples
+docs(guardian): add docstrings to ContainerGuardian class
+docs(webhook): document Apprise URL format requirements
+docs(monitoring): explain health check precedence
+```
+
+### `refactor` (Code-Umstrukturierung)
+
+Für technische Verbesserungen ohne Funktionsänderung:
+
+- ✅ `guardian` - Core-Refactoring
+- ✅ `monitoring` - Health-Check Code-Optimierung
+- ✅ `recovery` - Recovery-Code-Cleanup
+- ✅ `webhook` - Notification-Refactoring
+
+**Beispiele:**
+
+```bash
+refactor(guardian): extract health check logic to separate methods
+refactor(monitoring): simplify HTTP check error handling
+refactor(recovery): use subprocess context manager
+refactor(webhook): consolidate notification formatting
+```
+
+### `perf` (Performance-Verbesserungen)
+
+Performance-kritische Bereiche:
+
+- ✅ `guardian` - Haupt-Loop Optimierung
+- ✅ `monitoring` - Schnellere Health-Checks
+- ✅ `recovery` - Schnellere Recovery
+
+**Beispiele:**
+
+```bash
+perf(guardian): reduce Docker API call frequency
+perf(monitoring): parallelize container health checks
+perf(recovery): optimize image pull with --quiet flag
+```
+
+### `test` (Tests)
+
+Test-Scope oder getesteter Bereich:
+
+- ✅ `guardian` - Guardian-Tests
+- ✅ `monitoring` - Health-Check Tests
+- ✅ `recovery` - Recovery-Tests
+
+**Beispiele:**
+
+```bash
+test(guardian): add tests for failure tracking
+test(monitoring): add HTTP check timeout tests
+test(recovery): mock docker compose commands in tests
+```
+
+### `ci` (CI/CD)
+
+Immer CI-Scope:
+
+- ✅ `ci` - GitHub Actions, Workflows, Linting, Tools
+
+**Beispiele:**
+
+```bash
+ci(ci): add prettier formatting check to workflow
+ci(ci): configure cz-customizable with scope selection
+ci(ci): integrate Docker build into release workflow
+ci(ci): add mypy type checking to lint workflow
+```
+
+### `chore` (Wartung)
+
+Je nach Wartungsbereich:
+
+- ✅ `deps` - Dependency Updates
+- ✅ `config` - Konfigurationsänderungen
+- ✅ Andere Scopes je nach Kontext
+
+**Beispiele:**
+
+```bash
+chore(deps): update docker SDK to 7.1.0
+chore(config): adjust default grace period to 300s
+chore(docker): update base image to python 3.11-slim
+```
+
+### `build` (Build-System)
+
+Build-relevante Scopes:
+
+- ✅ `docker` - Dockerfile, Build-Prozess
+- ✅ `deps` - Build-Dependencies
+
+**Beispiele:**
+
+```bash
+build(docker): add multi-platform build support
+build(deps): pin dependency versions in Dockerfile
+```
+
 ## Beispiele für Commit-Messages
 
 ```

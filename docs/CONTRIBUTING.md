@@ -340,7 +340,8 @@ scopes:
 
 ### Using Commitizen (Recommended)
 
-Commitizen provides an interactive wizard to create properly formatted commits:
+Commitizen provides an interactive wizard to create properly formatted commits with **automatic
+scope selection** based on the commit type:
 
 ```bash
 # Interactive commit helper (includes quality checks)
@@ -352,14 +353,21 @@ This command will:
 1. **Run `make check`** - Validates code quality, tests, formatting
 2. **Launch commitizen wizard** - If checks pass
 3. **Guide you through commit creation:**
-   - Type selection (feat, fix, docs, etc.)
-   - Scope selection (from available scopes)
+   - **Type selection** (feat, fix, docs, etc.) - Choose from dropdown
+   - **Scope selection** (guardian, docker, webhook, etc.) - Filtered dropdown based on type
    - Short description
    - Long description (optional)
    - Breaking changes (optional)
    - Related issues (optional)
 
-> [!NOTE] `npm run commit` now automatically runs `make check` before the wizard. If quality checks
+> [!TIP] Commitizen filters available scopes based on the selected type. For example:
+>
+> - `feat` → shows guardian, webhook, monitoring, recovery scopes
+> - `ci` → only shows ci scope
+>
+> See [.github/SCOPES.md](../.github/SCOPES.md) for detailed type+scope combinations and examples.
+
+> [!NOTE] `npm run commit` automatically runs `make check` before the wizard. If quality checks
 > fail, fix the issues and run the command again.
 
 **Or use git directly** if you're familiar with the format:
