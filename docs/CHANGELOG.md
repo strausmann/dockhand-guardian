@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.5](https://github.com/strausmann/dockhand-guardian/compare/v1.3.4...v1.3.5) (2026-01-30)
+
+
+### 🐛 Bug Fixes
+
+* **ci:** fix dependabot commit format and flake8 issues ([8d5f2bf](https://github.com/strausmann/dockhand-guardian/commit/8d5f2bfc3b3636a2778106f4e6941ab3003e447f))
+
 ## [1.3.4](https://github.com/strausmann/dockhand-guardian/compare/v1.3.3...v1.3.4) (2026-01-30)
 
 
