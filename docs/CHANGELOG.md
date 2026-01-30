@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.4](https://github.com/strausmann/dockhand-guardian/compare/v1.6.3...v1.6.4) (2026-01-30)
+
+
+### 📦 Build System
+
+* **docker:** enhance image description with comprehensive feature list ([32bc7da](https://github.com/strausmann/dockhand-guardian/commit/32bc7da263dff12aa44f131bc5408e56864bb71f))
+
 ## [1.6.3](https://github.com/strausmann/dockhand-guardian/compare/v1.6.2...v1.6.3) (2026-01-30)
 
 
