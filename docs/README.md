@@ -456,6 +456,14 @@ make type-check        # Run mypy
 
 # Run tests
 make test              # Run pytest with coverage
+
+# Run all checks
+make check             # Lint + format-check + type-check + tests
+
+# Git workflow
+make commit            # Interactive commit with quality checks
+make amend             # Add changes to last commit
+make push              # Pull with rebase and push
 ```
 
 ### Running Locally

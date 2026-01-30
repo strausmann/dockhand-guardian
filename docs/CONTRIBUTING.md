@@ -534,6 +534,8 @@ make test          # Run tests
 make lint          # Run linting
 make check         # Run all checks
 make commit        # Interactive commit (commitizen)
+make amend         # Add changes to last commit
+make push          # Pull with rebase and push
 make clean         # Clean build artifacts
 ```
 
