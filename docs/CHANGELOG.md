@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.1](https://github.com/strausmann/dockhand-guardian/compare/v1.4.0...v1.4.1) (2026-01-30)
+
+
+### 🐛 Bug Fixes
+
+* **ci:** integrate Docker build into release workflow ([8de465e](https://github.com/strausmann/dockhand-guardian/commit/8de465e7d0a28f4de244d31223fefdfd4e700776))
+
 ## [1.4.0](https://github.com/strausmann/dockhand-guardian/compare/v1.3.5...v1.4.0) (2026-01-30)
 
 
