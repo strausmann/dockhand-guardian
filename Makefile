@@ -45,6 +45,11 @@ help:
 	@echo "  make ci-logs         Show logs of latest workflow run"
 	@echo "  make ci-watch        Watch currently running workflows"
 	@echo ""
+	@echo "Security Scanning:"
+	@echo "  make security-scan   Scan local Docker image with Trivy"
+	@echo "  make security-check  Check published image for vulnerabilities"
+	@echo "  make security-report Show detailed security report"
+	@echo ""
 	@echo "Docker Management:"
 	@echo "  make docker-up       Start containers"
 	@echo "  make docker-down     Stop containers"
@@ -359,3 +364,31 @@ clean:
 	docker compose down -v
 	docker rmi dockhand-guardian:latest 2>/dev/null || true
 	@echo "✅ Cleanup complete"
+
+# Security Scanning
+security-scan:
+	@echo "🔒 Scanning local Docker image with Trivy..."
+	@docker run --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		aquasec/trivy:latest image \
+		--severity CRITICAL,HIGH,MEDIUM \
+		dockhand-guardian:latest
+
+security-check:
+	@echo "🔒 Checking published image for vulnerabilities..."
+	@docker run --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		aquasec/trivy:latest image \
+		--severity CRITICAL,HIGH,MEDIUM \
+		ghcr.io/strausmann/dockhand-guardian:latest
+
+security-report:
+	@echo "🔒 Generating detailed security report..."
+	@docker run --rm \
+		-v /var/run/docker.sock:/var/run/docker.sock \
+		aquasec/trivy:latest image \
+		--format json \
+		--severity CRITICAL,HIGH,MEDIUM,LOW \
+		--output /dev/stdout \
+		ghcr.io/strausmann/dockhand-guardian:latest | \
+		jq '{critical: [.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")], high: [.Results[]?.Vulnerabilities[]? | select(.Severity=="HIGH")], summary: {critical_count: ([.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length), high_count: ([.Results[]?.Vulnerabilities[]? | select(.Severity=="HIGH")] | length), medium_count: ([.Results[]?.Vulnerabilities[]? | select(.Severity=="MEDIUM")] | length)}}'

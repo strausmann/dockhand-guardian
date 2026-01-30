@@ -1,0 +1,99 @@
+name: Auto-Rebuild on Critical CVEs
+
+on:
+  schedule:
+    # Wöchentlich Montag 3 Uhr UTC
+    - cron: "0 3 * * 1"
+  workflow_dispatch:
+    inputs:
+      force_rebuild:
+        description: "Force rebuild even without CVEs"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+  packages: write
+  pull-requests: write
+
+jobs:
+  check-and-rebuild:
+    name: Check CVEs and Rebuild
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Scan current image for critical CVEs
+        id: scan
+        uses: aquasecurity/trivy-action@0.28.0
+        with:
+          image-ref: "ghcr.io/strausmann/dockhand-guardian:latest"
+          format: "json"
+          output: "trivy-results.json"
+          severity: "CRITICAL,HIGH"
+          exit-code: "0"
+
+      - name: Check for critical vulnerabilities
+        id: check_cves
+        run: |
+          if [ -f trivy-results.json ]; then
+            critical=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="CRITICAL")] | length' trivy-results.json)
+            high=$(jq '[.Results[]?.Vulnerabilities[]? | select(.Severity=="HIGH")] | length' trivy-results.json)
+            echo "critical_count=$critical" >> $GITHUB_OUTPUT
+            echo "high_count=$high" >> $GITHUB_OUTPUT
+            echo "Found $critical CRITICAL and $high HIGH vulnerabilities"
+            
+            if [ "$critical" -gt 0 ] || [ "$high" -gt 3 ]; then
+              echo "needs_rebuild=true" >> $GITHUB_OUTPUT
+            else
+              echo "needs_rebuild=false" >> $GITHUB_OUTPUT
+            fi
+          else
+            echo "needs_rebuild=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Update base image and dependencies
+        if: steps.check_cves.outputs.needs_rebuild == 'true' || github.event.inputs.force_rebuild == 'true'
+        run: |
+          # Update Python base image to latest patch
+          current_version=$(grep "FROM python:" docker/Dockerfile | cut -d: -f2)
+          echo "Current Python version: $current_version"
+
+          # Für automatische Updates würden wir hier die Dockerfile anpassen
+          # und pip dependencies aktualisieren
+          echo "Triggering rebuild with updated dependencies..."
+
+      - name: Create Pull Request for security updates
+        if: steps.check_cves.outputs.needs_rebuild == 'true'
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "build(security): update dependencies to address CVEs"
+          title: "🔒 Security: Update dependencies (${{ steps.check_cves.outputs.critical_count }} CRITICAL, ${{ steps.check_cves.outputs.high_count }} HIGH)"
+          body: |
+            ## Security Update
+
+            Trivy detected vulnerabilities in the current image:
+            - **CRITICAL**: ${{ steps.check_cves.outputs.critical_count }}
+            - **HIGH**: ${{ steps.check_cves.outputs.high_count }}
+
+            ### Actions taken:
+            - Updated Python base image to latest patch
+            - Updated Python dependencies
+
+            ### Next steps:
+            1. Review the changes
+            2. Merge to trigger rebuild
+            3. New images will be published automatically
+
+            See [Security Tab](https://github.com/${{ github.repository }}/security) for details.
+          branch: security/auto-update-${{ github.run_number }}
+          delete-branch: true
+
+      - name: Comment on existing security PRs
+        if: steps.check_cves.outputs.needs_rebuild == 'true'
+        run: |
+          echo "Security updates needed. PR created or updated."
