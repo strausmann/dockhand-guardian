@@ -1,5 +1,17 @@
 # See https://pre-commit.com for more information
 repos:
+  # Run make check first - comprehensive quality checks (lint + format + type-check + tests)
+  - repo: local
+    hooks:
+      - id: make-check
+        name: Run make check (all quality checks)
+        entry: make
+        args: [check]
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.8.4
     hooks:
