@@ -31,7 +31,8 @@
         "ci",
         "deps",
         "docs",
-        "config"
+        "config",
+        "release"
       ]
     ],
     "scope-empty": [2, "never"],

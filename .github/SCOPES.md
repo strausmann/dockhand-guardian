@@ -18,6 +18,7 @@ Dockhand Guardian verwendet spezifische Scopes in Commit-Messages, um Änderunge
 | `deps` | Dependency Updates | requirements.txt, npm Pakete |
 | `docs` | Dokumentation | README, Inline-Dokumentation |
 | `config` | Konfigurationsoptionen | Umgebungsvariablen, Settings |
+| `release` | Release Management | Semantic-Release, Versioning |
 
 ## Entscheidungsbaum
 
@@ -32,7 +33,8 @@ Dockhand Guardian verwendet spezifische Scopes in Commit-Messages, um Änderunge
 ├─ CI/CD Workflows? → ci
 ├─ Abhängigkeiten? → deps
 ├─ Dokumentation? → docs
-└─ Konfigurationsoptionen? → config
+├─ Konfigurationsoptionen? → config
+└─ Release/Versioning? → release
 ```
 
 ## Beispiele für Commit-Messages
