@@ -26,15 +26,16 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
-            { "type": "feat", "section": "Features" },
-            { "type": "fix", "section": "Bug Fixes" },
-            { "type": "perf", "section": "Performance Improvements" },
-            { "type": "refactor", "section": "Code Refactoring" },
-            { "type": "docs", "section": "Documentation", "hidden": false },
-            { "type": "style", "section": "Styles", "hidden": true },
-            { "type": "test", "section": "Tests", "hidden": true },
-            { "type": "build", "section": "Build System" },
-            { "type": "ci", "section": "CI/CD", "hidden": true }
+            { "type": "feat", "section": "✨ Features" },
+            { "type": "fix", "section": "🐛 Bug Fixes" },
+            { "type": "perf", "section": "⚡ Performance Improvements" },
+            { "type": "refactor", "section": "♻️ Code Refactoring" },
+            { "type": "docs", "section": "📚 Documentation", "hidden": false },
+            { "type": "style", "section": "💎 Styles", "hidden": true },
+            { "type": "test", "section": "✅ Tests", "hidden": true },
+            { "type": "build", "section": "📦 Build System" },
+            { "type": "ci", "section": "🔧 CI/CD", "hidden": false },
+            { "type": "chore", "section": "🧹 Chores", "hidden": true }
           ]
         }
       }
