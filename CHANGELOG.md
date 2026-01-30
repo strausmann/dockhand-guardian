@@ -5,6 +5,23 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0](https://github.com/strausmann/dockhand-guardian/compare/v1.1.0...v1.2.0) (2026-01-30)
+
+
+### ✨ Features
+
+* **ci:** add automatic docker publishing on dependency updates ([f6d0152](https://github.com/strausmann/dockhand-guardian/commit/f6d01520d2150f2cb81299e99673d7e7fd61c564))
+
+
+### 📚 Documentation
+
+* **readme:** add badges, emojis, copilot notice and contributing guide ([f30d95d](https://github.com/strausmann/dockhand-guardian/commit/f30d95d2d082d21de9304da1c0718524694a0a54))
+
+
+### 🔧 CI/CD
+
+* **deps:** enable daily dependency checks for all ecosystems ([cd3c349](https://github.com/strausmann/dockhand-guardian/commit/cd3c349293e916ee9c7383f87f427cb8bc364536))
+
 ## [1.1.0](https://github.com/strausmann/dockhand-guardian/compare/v1.0.0...v1.1.0) (2026-01-30)
 
 
