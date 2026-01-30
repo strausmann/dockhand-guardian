@@ -10,8 +10,7 @@ updates:
       - "dependencies"
       - "docker"
     commit-message:
-      prefix: "fix"
-      prefix-development: "fix"
+      prefix: "fix(deps)"
     open-pull-requests-limit: 5
 
   # Python dependencies - PRODUCTION RELEVANT (triggers releases)
@@ -24,8 +23,7 @@ updates:
       - "dependencies"
       - "python"
     commit-message:
-      prefix: "fix"
-      prefix-development: "fix"
+      prefix: "fix(deps)"
     open-pull-requests-limit: 5
 
   # GitHub Actions - CI only (no releases)
@@ -38,8 +36,7 @@ updates:
       - "dependencies"
       - "ci"
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
+      prefix: "chore(deps)"
     open-pull-requests-limit: 5
 
   # npm dependencies - Dev tools only (no releases)
@@ -52,6 +49,5 @@ updates:
       - "dependencies"
       - "npm"
     commit-message:
-      prefix: "chore"
-      prefix-development: "chore"
+      prefix: "chore(deps)"
     open-pull-requests-limit: 5

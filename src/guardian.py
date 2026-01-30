@@ -76,7 +76,7 @@ class ContainerGuardian:
             else "disabled"
         )
         logger.info(f"  Webhook notifications: {webhook_status}")
-    
+
     def _parse_http_checks(self) -> Dict[str, str]:
         """Parse HTTP_CHECKS environment variable.
         Format: container1=http://url1,container2=http://url2
@@ -102,30 +102,29 @@ class ContainerGuardian:
 
         try:
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            containers_str = ', '.join(containers)
             status_emoji = "✅" if success else "❌"
             status_text = "Recovery Successful" if success else "Recovery Failed"
-            
+
             title = f"{status_emoji} Dockhand Guardian Alert"
             body = f"**{status_text}**\n\n" \
                    f"🐳 **Affected Containers:**\n" + \
                    '\n'.join([f"  • {c}" for c in containers]) + \
                    f"\n\n⏰ **Timestamp:** {timestamp}"
-            
+
             # Send notification via Apprise
             result = self.apprise.notify(
                 title=title,
                 body=body
             )
-            
+
             if result:
                 logger.info(f"Webhook notification sent successfully to {len(self.apprise)} service(s)")
             else:
                 logger.warning("Webhook notification failed for some or all services")
-                
+
         except Exception as e:
             logger.error(f"Failed to send webhook notification: {e}")
-    
+
     def is_maintenance_mode(self) -> bool:
         """Check if maintenance mode is active."""
         maintenance_path = os.path.join(self.stack_dir, self.maintenance_file)
@@ -133,21 +132,21 @@ class ContainerGuardian:
         if is_maintenance:
             logger.debug("Maintenance mode is active")
         return is_maintenance
-    
+
     def is_in_cooldown(self) -> bool:
         """Check if we're in cooldown period after last recovery."""
         if self.last_recovery_time is None:
             return False
-        
+
         elapsed = (datetime.now() - self.last_recovery_time).total_seconds()
         in_cooldown = elapsed < self.cooldown_seconds
-        
+
         if in_cooldown:
             remaining = self.cooldown_seconds - elapsed
             logger.debug(f"In cooldown period: {remaining:.0f}s remaining")
-        
+
         return in_cooldown
-    
+
     def check_container_health(self, container_name: str) -> bool:
         """Check if a container is healthy.
         Returns True if healthy, False otherwise.
@@ -158,22 +157,22 @@ class ContainerGuardian:
                 all=True,
                 filters={'name': container_name}
             )
-            
+
             if not containers:
                 logger.warning(f"Container '{container_name}' not found")
                 return False
-            
+
             container = containers[0]
-            
+
             # Check if container is running
             if container.status != 'running':
                 logger.warning(f"Container '{container_name}' is not running (status: {container.status})")
                 return False
-            
+
             # Check Docker health status if available
             container.reload()  # Refresh container info
             health = container.attrs.get('State', {}).get('Health', {})
-            
+
             if health:
                 health_status = health.get('Status', 'unknown')
                 if health_status == 'healthy':
@@ -186,20 +185,20 @@ class ContainerGuardian:
                 # No health check defined, consider it healthy if running
                 logger.debug(f"Container '{container_name}' is running (no health check defined)")
                 return True
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Error checking container '{container_name}': {e}")
             return False
-    
+
     def check_http_endpoint(self, container_name: str) -> bool:
         """Check HTTP endpoint if configured for this container.
         Returns True if check passes or not configured, False if check fails.
         """
         if container_name not in self.http_checks:
             return True  # No HTTP check configured, pass by default
-        
+
         url = self.http_checks[container_name]
         try:
             response = requests.get(url, timeout=10)
@@ -212,7 +211,7 @@ class ContainerGuardian:
         except Exception as e:
             logger.warning(f"HTTP check failed for '{container_name}': {url} - {e}")
             return False
-    
+
     def check_container(self, container_name: str) -> bool:
         """Perform all checks for a container.
         Returns True if all checks pass, False otherwise.
@@ -221,27 +220,27 @@ class ContainerGuardian:
         container_healthy = self.check_container_health(container_name)
         if not container_healthy:
             return False
-        
+
         # Check HTTP endpoint if configured
         http_healthy = self.check_http_endpoint(container_name)
         if not http_healthy:
             return False
-        
+
         return True
-    
+
     def recover_stack(self):
         """Perform recovery by pulling and recreating containers."""
         logger.warning("=" * 60)
         logger.warning("INITIATING STACK RECOVERY")
         logger.warning("=" * 60)
-        
+
         recovery_success = False
         failed_containers = [name for name, time in self.failure_times.items() if time is not None]
-        
+
         try:
             # Change to stack directory
             os.chdir(self.stack_dir)
-            
+
             # Step 1: Pull latest images
             logger.info("Step 1: Pulling latest images...")
             result = subprocess.run(
@@ -250,12 +249,12 @@ class ContainerGuardian:
                 text=True,
                 timeout=300
             )
-            
+
             if result.returncode != 0:
                 logger.error(f"docker compose pull failed: {result.stderr}")
             else:
                 logger.info("Images pulled successfully")
-            
+
             # Step 2: Recreate containers
             logger.info("Step 2: Recreating containers...")
             result = subprocess.run(
@@ -264,34 +263,34 @@ class ContainerGuardian:
                 text=True,
                 timeout=300
             )
-            
+
             if result.returncode != 0:
                 logger.error(f"docker compose up failed: {result.stderr}")
                 raise Exception("Recovery failed")
             else:
                 logger.info("Containers recreated successfully")
                 recovery_success = True
-            
+
             # Update recovery time and reset failure tracking
             self.last_recovery_time = datetime.now()
             for container_name in self.monitored_containers:
                 self.failure_times[container_name] = None
-            
+
             logger.warning("=" * 60)
             logger.warning("STACK RECOVERY COMPLETED")
             logger.warning("=" * 60)
-            
+
         except Exception as e:
             logger.error(f"Recovery failed with error: {e}")
             self.last_recovery_time = datetime.now()  # Set cooldown even on failure
         finally:
             # Send webhook notification
             self.send_webhook_notification(failed_containers, recovery_success)
-    
+
     def monitor_containers(self):
         """Main monitoring loop."""
         logger.info("Starting container monitoring...")
-        
+
         while True:
             try:
                 # Check if in maintenance mode
@@ -299,19 +298,19 @@ class ContainerGuardian:
                     logger.debug("Skipping checks: maintenance mode active")
                     time.sleep(self.check_interval)
                     continue
-                
+
                 # Check if in cooldown
                 if self.is_in_cooldown():
                     logger.debug("Skipping checks: in cooldown period")
                     time.sleep(self.check_interval)
                     continue
-                
+
                 # Check each monitored container
                 containers_needing_recovery = []
-                
+
                 for container_name in self.monitored_containers:
                     is_healthy = self.check_container(container_name)
-                    
+
                     if is_healthy:
                         # Container is healthy, reset failure time
                         if self.failure_times[container_name] is not None:
@@ -331,31 +330,34 @@ class ContainerGuardian:
                                 containers_needing_recovery.append(container_name)
                             else:
                                 remaining = self.grace_seconds - elapsed
-                                logger.info(f"Container '{container_name}' unhealthy for {elapsed:.0f}s (grace: {remaining:.0f}s remaining)")
-                
+                                logger.info(
+                                    f"Container '{container_name}' unhealthy for {elapsed:.0f}s "
+                                    f"(grace: {remaining:.0f}s remaining)"
+                                )
+
                 # Perform recovery if any container needs it
                 if containers_needing_recovery:
                     logger.warning(f"Recovery needed for: {', '.join(containers_needing_recovery)}")
                     self.recover_stack()
                 else:
                     logger.debug("All monitored containers are healthy")
-                
+
             except KeyboardInterrupt:
                 logger.info("Shutdown signal received")
                 break
             except Exception as e:
                 logger.error(f"Error in monitoring loop: {e}", exc_info=True)
-            
+
             # Wait before next check
             time.sleep(self.check_interval)
-        
+
         logger.info("Guardian shutdown complete")
 
 
 def main():
     """Main entry point."""
     logger.info("Dockhand Guardian starting...")
-    
+
     guardian = ContainerGuardian()
     guardian.monitor_containers()
 
