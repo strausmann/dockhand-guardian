@@ -10,7 +10,7 @@ import sys
 import time
 import logging
 import subprocess
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import Dict, List, Optional
 import docker
 import requests
@@ -29,7 +29,7 @@ logger = logging.getLogger('guardian')
 
 class ContainerGuardian:
     """Main guardian class that monitors and recovers containers."""
-    
+
     def __init__(self):
         # Configuration from environment variables
         self.monitored_containers = os.getenv('MONITORED_CONTAINERS', 'dockhand-app,dockhand-database').split(',')
@@ -39,11 +39,11 @@ class ContainerGuardian:
         self.stack_dir = os.getenv('STACK_DIR', '/stack')
         self.maintenance_file = os.getenv('MAINTENANCE_FILE', '.maintenance')
         self.http_checks = self._parse_http_checks()
-        
+
         # Webhook configuration via Apprise
         self.webhook_urls = os.getenv('WEBHOOK_URLS', '').strip()
         self.webhook_enabled = bool(self.webhook_urls)
-        
+
         # Initialize Apprise
         self.apprise = apprise.Apprise()
         if self.webhook_enabled:
@@ -51,11 +51,11 @@ class ContainerGuardian:
                 url = url.strip()
                 if url:
                     self.apprise.add(url)
-        
+
         # State tracking
         self.failure_times: Dict[str, Optional[datetime]] = {name: None for name in self.monitored_containers}
         self.last_recovery_time: Optional[datetime] = None
-        
+
         # Initialize Docker client
         try:
             self.docker_client = docker.from_env()
@@ -63,15 +63,19 @@ class ContainerGuardian:
         except Exception as e:
             logger.error(f"Failed to initialize Docker client: {e}")
             sys.exit(1)
-        
-        logger.info(f"Guardian initialized with config:")
+
+        logger.info("Guardian initialized with config:")
         logger.info(f"  Monitored containers: {self.monitored_containers}")
         logger.info(f"  Grace period: {self.grace_seconds}s")
         logger.info(f"  Check interval: {self.check_interval}s")
         logger.info(f"  Cooldown: {self.cooldown_seconds}s")
         logger.info(f"  Stack directory: {self.stack_dir}")
         logger.info(f"  HTTP checks: {len(self.http_checks)} configured")
-        logger.info(f"  Webhook notifications: {'enabled (' + str(len(self.apprise)) + ' service(s))' if self.webhook_enabled else 'disabled'}")
+        webhook_status = (
+            f"enabled ({len(self.apprise)} service(s))" if self.webhook_enabled
+            else "disabled"
+        )
+        logger.info(f"  Webhook notifications: {webhook_status}")
     
     def _parse_http_checks(self) -> Dict[str, str]:
         """Parse HTTP_CHECKS environment variable.
@@ -85,20 +89,20 @@ class ContainerGuardian:
                     container, url = check.split('=', 1)
                     http_checks[container.strip()] = url.strip()
         return http_checks
-    
+
     def send_webhook_notification(self, containers: List[str], success: bool):
         """Send webhook notification about recovery action via Apprise.
-        
+
         Args:
             containers: List of container names that triggered recovery
             success: Whether the recovery was successful
         """
         if not self.webhook_enabled:
             return
-        
+
         try:
             timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-            container_list = ', '.join(containers)
+            containers_str = ', '.join(containers)
             status_emoji = "✅" if success else "❌"
             status_text = "Recovery Successful" if success else "Recovery Failed"
             
