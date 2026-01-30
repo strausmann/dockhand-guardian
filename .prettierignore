@@ -1,0 +1,12 @@
+# Ignore artifacts:
+node_modules
+package-lock.json
+dist
+build
+coverage
+
+# Ignore Python files
+*.py
+
+# Ignore generated files
+CHANGELOG.md

@@ -1,4 +1,4 @@
-.PHONY: help build test lint clean docker-up docker-down docker-logs docker-restart release-dry-run release-notes release status version
+.PHONY: help build test lint format format-check clean docker-up docker-down docker-logs docker-restart release-dry-run release-notes release status version
 
 help:
 	@echo "╔════════════════════════════════════════════════════════════╗"
@@ -17,6 +17,8 @@ help:
 	@echo "  make build           Build Docker image"
 	@echo "  make test            Run tests"
 	@echo "  make lint            Code quality checks"
+	@echo "  make format          Format code with prettier"
+	@echo "  make format-check    Check code formatting"
 	@echo ""
 	@echo "Docker Management:"
 	@echo "  make docker-up       Start containers"
@@ -46,6 +48,14 @@ lint:
 	@echo "🔍 Checking code quality..."
 	@python3 -m py_compile src/guardian.py && echo "✅ Python syntax OK"
 	@python3 -m py_compile tests/test_guardian.py && echo "✅ Test syntax OK"
+
+format:
+	@echo "✨ Formatting code..."
+	npm run format
+
+format-check:
+	@echo "🔍 Checking code formatting..."
+	npm run format:check
 
 docker-up:
 	@echo "🚀 Starting containers..."
