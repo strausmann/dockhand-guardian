@@ -16,7 +16,7 @@ kategorisieren. Jeder Commit MUSS einen Scope haben.
 | `monitoring` | Health-Check Funktionalität           | HTTP-Checks, Container-Status           |
 | `recovery`   | Recovery-Mechanismen                  | Stack-Neustart, Pull-Logik              |
 | `ci`         | CI/CD Pipeline Änderungen             | GitHub Actions, Test-Workflows          |
-| `deps`       | Dependency Updates                    | requirements.txt, npm Pakete            |
+| `deps`       | Dependency Updates                    | pyproject.toml, npm Pakete              |
 | `docs`       | Dokumentation                         | README, Inline-Dokumentation            |
 | `config`     | Konfigurationsoptionen                | Umgebungsvariablen, Settings            |
 | `release`    | Release Management                    | Semantic-Release, Versioning            |

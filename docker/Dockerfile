@@ -23,8 +23,8 @@ RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-27.
 WORKDIR /app
 
 # Copy requirements and install Python dependencies
-COPY ../requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+COPY ../pyproject.toml .
+RUN pip install --no-cache-dir .
 
 # Copy guardian script
 COPY ../src/guardian.py .

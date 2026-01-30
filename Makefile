@@ -1,4 +1,4 @@
-.PHONY: help build test lint format format-check clean docker-up docker-down docker-logs docker-restart release-dry-run release-notes release status version
+.PHONY: help build test lint format format-check type-check clean docker-up docker-down docker-logs docker-restart release-dry-run release-notes release status version
 
 help:
 	@echo "╔════════════════════════════════════════════════════════════╗"
@@ -17,8 +17,9 @@ help:
 	@echo "  make build           Build Docker image"
 	@echo "  make test            Run tests"
 	@echo "  make lint            Code quality checks"
-	@echo "  make format          Format code with prettier"
+	@echo "  make format          Format code with ruff & prettier"
 	@echo "  make format-check    Check code formatting"
+	@echo "  make type-check      Run mypy type checking"
 	@echo ""
 	@echo "Docker Management:"
 	@echo "  make docker-up       Start containers"
@@ -46,16 +47,24 @@ test:
 
 lint:
 	@echo "🔍 Checking code quality..."
-	@python3 -m py_compile src/guardian.py && echo "✅ Python syntax OK"
-	@python3 -m py_compile tests/test_guardian.py && echo "✅ Test syntax OK"
+	@ruff check src/ tests/
+	@echo "✅ Linting complete"
 
 format:
 	@echo "✨ Formatting code..."
-	npm run format
+	@ruff format src/ tests/
+	@ruff check --fix src/ tests/
+	@npm run format
+	@echo "✅ Formatting complete"
 
 format-check:
 	@echo "🔍 Checking code formatting..."
-	npm run format:check
+	@ruff format --check src/ tests/
+	@npm run format:check
+
+type-check:
+	@echo "🔍 Type checking..."
+	@mypy src/ --ignore-missing-imports
 
 docker-up:
 	@echo "🚀 Starting containers..."

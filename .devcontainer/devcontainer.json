@@ -52,7 +52,7 @@
 
   "forwardPorts": [],
 
-  "postCreateCommand": "pip3 install -r requirements.txt && npm install",
+  "postCreateCommand": "pip3 install -e .[dev] && pre-commit install && npm install && npm run prepare",
 
   "remoteUser": "vscode"
 }

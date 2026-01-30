@@ -65,7 +65,7 @@ dockhand-guardian/
 │   └── dependabot.yml      # Dependency updates
 │
 └── Configuration files     # 📝 Project configuration
-    ├── requirements.txt    # Python dependencies
+    ├── pyproject.toml      # Python dependencies & project config
     ├── package.json        # npm dev tools (semantic-release)
     ├── Makefile            # Development commands
     ├── .releaserc.json     # Semantic release config
@@ -95,7 +95,7 @@ dockhand-guardian/
 
 ```bash
 # Python dependencies
-pip install -r requirements.txt
+pip install -e .[dev]
 
 # Development tooling (commitizen, commitlint, husky)
 npm install

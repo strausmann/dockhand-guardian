@@ -50,7 +50,7 @@ dockhand-guardian/
 │   └── dependabot.yml      # Dependency automation
 │
 └── Root files              # Config & symlinks
-    ├── requirements.txt    # Python dependencies
+    ├── pyproject.toml      # Python dependencies & project config
     ├── package.json        # npm dev tools
     ├── Makefile            # Development commands
     └── .releaserc.json     # Release automation
@@ -266,7 +266,7 @@ on every release.
 
 ```bash
 # Install dependencies
-pip install -r requirements.txt
+pip install -e .[dev]
 
 # Set environment variables
 export MONITORED_CONTAINERS=dockhand-app,dockhand-database

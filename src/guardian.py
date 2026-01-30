@@ -5,26 +5,24 @@ Monitors dockhand-app and dockhand-database containers via docker.sock
 and performs automatic recovery when health checks fail.
 """
 
+import logging
 import os
+import subprocess
 import sys
 import time
-import logging
-import subprocess
 from datetime import datetime
-from typing import Dict, List, Optional
+
+import apprise
 import docker
 import requests
-import apprise
 
 # Configure logging
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.StreamHandler(sys.stdout)
-    ]
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler(sys.stdout)],
 )
-logger = logging.getLogger('guardian')
+logger = logging.getLogger("guardian")
 
 
 class ContainerGuardian:
@@ -32,33 +30,33 @@ class ContainerGuardian:
 
     def __init__(self):
         # Configuration from environment variables
-        self.monitored_containers = os.getenv('MONITORED_CONTAINERS', 'dockhand-app,dockhand-database').split(',')
-        self.grace_seconds = int(os.getenv('GRACE_SECONDS', '300'))
-        self.check_interval = int(os.getenv('CHECK_INTERVAL', '30'))
-        self.cooldown_seconds = int(os.getenv('COOLDOWN_SECONDS', '600'))
-        self.stack_dir = os.getenv('STACK_DIR', '/stack')
-        self.maintenance_file = os.getenv('MAINTENANCE_FILE', '.maintenance')
+        self.monitored_containers = os.getenv("MONITORED_CONTAINERS", "dockhand-app,dockhand-database").split(",")
+        self.grace_seconds = int(os.getenv("GRACE_SECONDS", "300"))
+        self.check_interval = int(os.getenv("CHECK_INTERVAL", "30"))
+        self.cooldown_seconds = int(os.getenv("COOLDOWN_SECONDS", "600"))
+        self.stack_dir = os.getenv("STACK_DIR", "/stack")
+        self.maintenance_file = os.getenv("MAINTENANCE_FILE", ".maintenance")
         self.http_checks = self._parse_http_checks()
 
         # Webhook configuration via Apprise
-        self.webhook_urls = os.getenv('WEBHOOK_URLS', '').strip()
+        self.webhook_urls = os.getenv("WEBHOOK_URLS", "").strip()
         self.webhook_enabled = bool(self.webhook_urls)
 
         # Initialize Apprise
         self.apprise = apprise.Apprise()
         if self.webhook_enabled:
-            for url in self.webhook_urls.split(','):
+            for url in self.webhook_urls.split(","):
                 url = url.strip()
                 if url:
                     self.apprise.add(url)
 
         # State tracking
-        self.failure_times: Dict[str, Optional[datetime]] = {name: None for name in self.monitored_containers}
-        self.last_recovery_time: Optional[datetime] = None
+        self.failure_times: dict[str, datetime | None] = dict.fromkeys(self.monitored_containers)
+        self.last_recovery_time: datetime | None = None
 
         # Initialize Docker client
         try:
-            self.docker_client = docker.from_env()
+            self.docker_client = docker.from_env()  # type: ignore[attr-defined]
             logger.info("Docker client initialized successfully")
         except Exception as e:
             logger.error(f"Failed to initialize Docker client: {e}")
@@ -71,26 +69,23 @@ class ContainerGuardian:
         logger.info(f"  Cooldown: {self.cooldown_seconds}s")
         logger.info(f"  Stack directory: {self.stack_dir}")
         logger.info(f"  HTTP checks: {len(self.http_checks)} configured")
-        webhook_status = (
-            f"enabled ({len(self.apprise)} service(s))" if self.webhook_enabled
-            else "disabled"
-        )
+        webhook_status = f"enabled ({len(self.apprise)} service(s))" if self.webhook_enabled else "disabled"
         logger.info(f"  Webhook notifications: {webhook_status}")
 
-    def _parse_http_checks(self) -> Dict[str, str]:
+    def _parse_http_checks(self) -> dict[str, str]:
         """Parse HTTP_CHECKS environment variable.
         Format: container1=http://url1,container2=http://url2
         """
         http_checks = {}
-        http_checks_str = os.getenv('HTTP_CHECKS', '')
+        http_checks_str = os.getenv("HTTP_CHECKS", "")
         if http_checks_str:
-            for check in http_checks_str.split(','):
-                if '=' in check:
-                    container, url = check.split('=', 1)
+            for check in http_checks_str.split(","):
+                if "=" in check:
+                    container, url = check.split("=", 1)
                     http_checks[container.strip()] = url.strip()
         return http_checks
 
-    def send_webhook_notification(self, containers: List[str], success: bool):
+    def send_webhook_notification(self, containers: list[str], success: bool):
         """Send webhook notification about recovery action via Apprise.
 
         Args:
@@ -101,21 +96,20 @@ class ContainerGuardian:
             return
 
         try:
-            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             status_emoji = "✅" if success else "❌"
             status_text = "Recovery Successful" if success else "Recovery Failed"
 
             title = f"{status_emoji} Dockhand Guardian Alert"
-            body = f"**{status_text}**\n\n" \
-                   f"🐳 **Affected Containers:**\n" + \
-                   '\n'.join([f"  • {c}" for c in containers]) + \
-                   f"\n\n⏰ **Timestamp:** {timestamp}"
+            body = (
+                f"**{status_text}**\n\n"
+                f"🐳 **Affected Containers:**\n"
+                + "\n".join([f"  • {c}" for c in containers])
+                + f"\n\n⏰ **Timestamp:** {timestamp}"
+            )
 
             # Send notification via Apprise
-            result = self.apprise.notify(
-                title=title,
-                body=body
-            )
+            result = self.apprise.notify(title=title, body=body)
 
             if result:
                 logger.info(f"Webhook notification sent successfully to {len(self.apprise)} service(s)")
@@ -153,10 +147,7 @@ class ContainerGuardian:
         """
         try:
             # Try to find the container
-            containers = self.docker_client.containers.list(
-                all=True,
-                filters={'name': container_name}
-            )
+            containers = self.docker_client.containers.list(all=True, filters={"name": container_name})
 
             if not containers:
                 logger.warning(f"Container '{container_name}' not found")
@@ -165,20 +156,20 @@ class ContainerGuardian:
             container = containers[0]
 
             # Check if container is running
-            if container.status != 'running':
+            if container.status != "running":
                 logger.warning(f"Container '{container_name}' is not running (status: {container.status})")
                 return False
 
             # Check Docker health status if available
             container.reload()  # Refresh container info
-            health = container.attrs.get('State', {}).get('Health', {})
+            health = container.attrs.get("State", {}).get("Health", {})
 
             if health:
-                health_status = health.get('Status', 'unknown')
-                if health_status == 'healthy':
+                health_status = health.get("Status", "unknown")
+                if health_status == "healthy":
                     logger.debug(f"Container '{container_name}' is healthy (Docker health check)")
                     return True
-                elif health_status in ['unhealthy', 'starting']:
+                elif health_status in ["unhealthy", "starting"]:
                     logger.warning(f"Container '{container_name}' health status: {health_status}")
                     return False
             else:
@@ -223,10 +214,7 @@ class ContainerGuardian:
 
         # Check HTTP endpoint if configured
         http_healthy = self.check_http_endpoint(container_name)
-        if not http_healthy:
-            return False
-
-        return True
+        return http_healthy
 
     def recover_stack(self):
         """Perform recovery by pulling and recreating containers."""
@@ -243,12 +231,7 @@ class ContainerGuardian:
 
             # Step 1: Pull latest images
             logger.info("Step 1: Pulling latest images...")
-            result = subprocess.run(
-                ['docker', 'compose', 'pull'],
-                capture_output=True,
-                text=True,
-                timeout=300
-            )
+            result = subprocess.run(["docker", "compose", "pull"], capture_output=True, text=True, timeout=300)
 
             if result.returncode != 0:
                 logger.error(f"docker compose pull failed: {result.stderr}")
@@ -258,10 +241,7 @@ class ContainerGuardian:
             # Step 2: Recreate containers
             logger.info("Step 2: Recreating containers...")
             result = subprocess.run(
-                ['docker', 'compose', 'up', '-d', '--force-recreate'],
-                capture_output=True,
-                text=True,
-                timeout=300
+                ["docker", "compose", "up", "-d", "--force-recreate"], capture_output=True, text=True, timeout=300
             )
 
             if result.returncode != 0:
@@ -324,7 +304,8 @@ class ContainerGuardian:
                             logger.warning(f"Container '{container_name}' failure detected, grace period started")
                         else:
                             # Check if grace period has expired
-                            elapsed = (datetime.now() - self.failure_times[container_name]).total_seconds()
+                            failure_time = self.failure_times[container_name]
+                            elapsed = (datetime.now() - failure_time).total_seconds() if failure_time is not None else 0
                             if elapsed >= self.grace_seconds:
                                 logger.warning(f"Container '{container_name}' grace period expired ({elapsed:.0f}s)")
                                 containers_needing_recovery.append(container_name)
@@ -362,5 +343,5 @@ def main():
     guardian.monitor_containers()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

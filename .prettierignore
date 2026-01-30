@@ -5,8 +5,13 @@ dist
 build
 coverage
 
-# Ignore Python files
+# Ignore Python files and caches
 *.py
+__pycache__
+.pytest_cache
+.mypy_cache
+htmlcov
+.coverage
 
 # Ignore generated files
 CHANGELOG.md
