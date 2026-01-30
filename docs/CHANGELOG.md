@@ -5,6 +5,18 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.1](https://github.com/strausmann/dockhand-guardian/compare/v1.6.0...v1.6.1) (2026-01-30)
+
+
+### 📚 Documentation
+
+* **docs:** update copilot instructions with modern dev workflow ([84ca1ae](https://github.com/strausmann/dockhand-guardian/commit/84ca1aea13f19068e8f04366bebb8d02a86b02bc))
+
+
+### 📦 Build System
+
+* **docker:** add OCI image labels for GitHub Container Registry ([a3acc1b](https://github.com/strausmann/dockhand-guardian/commit/a3acc1b5346ff0ce8f092d5a2de28a315feb8c6d))
+
 ## [1.6.0](https://github.com/strausmann/dockhand-guardian/compare/v1.5.0...v1.6.0) (2026-01-30)
 
 
