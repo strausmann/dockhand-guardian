@@ -28,7 +28,59 @@ This project follows the [Contributor Covenant](https://www.contributor-covenant
    git remote add upstream https://github.com/strausmann/dockhand-guardian.git
    ```
 
-## 💻 Development Setup
+## � Repository Structure
+
+Understanding the project layout:
+
+```
+dockhand-guardian/
+├── src/                    # 🐍 Application source code
+│   ├── __init__.py         # Package initialization
+│   └── guardian.py         # Main watchdog logic
+│
+├── tests/                  # 🧪 Test suite
+│   └── test_guardian.py    # Unit tests
+│
+├── docker/                 # 🐳 Container configuration
+│   ├── Dockerfile          # Multi-stage build definition
+│   └── docker-compose.yml  # Example deployment stack
+│
+├── docs/                   # 📚 Documentation
+│   ├── README.md           # Main documentation
+│   ├── CONTRIBUTING.md     # This file
+│   ├── WEBHOOKS.md         # Notification setup guide
+│   └── CHANGELOG.md        # Release history (auto-generated)
+│
+├── .github/                # ⚙️ GitHub automation
+│   ├── workflows/          # CI/CD pipelines
+│   │   ├── test.yml        # Python tests & Docker build
+│   │   ├── lint.yml        # Code quality checks
+│   │   ├── release.yml     # Semantic release
+│   │   ├── docker-publish.yml  # Image publishing
+│   │   └── dependabot-auto-merge.yml  # Auto-merge deps
+│   ├── ISSUE_TEMPLATE/     # Issue templates
+│   ├── SCOPES.md           # Commit scope reference
+│   └── dependabot.yml      # Dependency updates
+│
+└── Configuration files     # 📝 Project configuration
+    ├── requirements.txt    # Python dependencies
+    ├── package.json        # npm dev tools (semantic-release)
+    ├── Makefile            # Development commands
+    ├── .releaserc.json     # Semantic release config
+    ├── .prettierrc.json    # Code formatting
+    ├── .commitlintrc.json  # Commit message validation
+    └── .husky/             # Git hooks
+```
+
+### Key Points
+
+- **Symlinks in root**: README, CHANGELOG, Dockerfile, docker-compose.yml link to their actual locations
+- **No code in root**: All application code is in `src/`
+- **Tests separate**: All tests in dedicated `tests/` directory
+- **Docker isolated**: Build files in `docker/` directory
+- **Docs centralized**: All documentation in `docs/` directory
+
+## �💻 Development Setup
 
 ### Prerequisites
 

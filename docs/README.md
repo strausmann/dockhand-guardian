@@ -19,6 +19,41 @@ A Docker sidecar watchdog that monitors container health and automatically recov
 
 Dockhand Guardian is a lightweight Python-based monitoring service that watches over your Docker containers (specifically `dockhand-app` and `dockhand-database`) via Docker socket. When containers fail health checks for longer than a configured grace period, it automatically triggers a recovery process by pulling the latest images and recreating the containers.
 
+## 📁 Project Structure
+
+```
+dockhand-guardian/
+├── src/                    # Application source code
+│   ├── __init__.py
+│   └── guardian.py         # Main watchdog application
+│
+├── tests/                  # Unit tests
+│   └── test_guardian.py
+│
+├── docker/                 # Docker & container configuration
+│   ├── Dockerfile          # Container image definition
+│   └── docker-compose.yml  # Example deployment setup
+│
+├── docs/                   # Documentation
+│   ├── README.md           # This file
+│   ├── CONTRIBUTING.md     # Contribution guidelines
+│   ├── WEBHOOKS.md         # Webhook configuration guide
+│   └── CHANGELOG.md        # Version history
+│
+├── .github/                # GitHub configuration
+│   ├── workflows/          # CI/CD workflows
+│   ├── ISSUE_TEMPLATE/     # Issue templates
+│   └── dependabot.yml      # Dependency automation
+│
+└── Root files              # Config & symlinks
+    ├── requirements.txt    # Python dependencies
+    ├── package.json        # npm dev tools
+    ├── Makefile            # Development commands
+    └── .releaserc.json     # Release automation
+```
+
+> **Note:** Important files (README, Dockerfile, docker-compose.yml, CHANGELOG) are symlinked to the root for convenience and GitHub compatibility.
+
 ## ✨ Features
 
 - 🔍 **Container Health Monitoring**: Monitors Docker container state and built-in health checks
