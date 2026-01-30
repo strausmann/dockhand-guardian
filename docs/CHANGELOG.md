@@ -5,6 +5,12 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0](https://github.com/strausmann/dockhand-guardian/compare/v1.6.5...v1.7.0) (2026-01-30)
+
+### ✨ Features
+
+* **ci:** add Trivy security scanning for Docker images and dependencies ([2de6338](https://github.com/strausmann/dockhand-guardian/commit/2de633877d6a33b199ad0dfff2808a86709ae6a9))
+
 ## [1.6.5](https://github.com/strausmann/dockhand-guardian/compare/v1.6.4...v1.6.5) (2026-01-30)
 
 ### 📦 Build System
