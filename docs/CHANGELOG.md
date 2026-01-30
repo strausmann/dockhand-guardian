@@ -5,6 +5,23 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.0](https://github.com/strausmann/dockhand-guardian/compare/v1.4.1...v1.5.0) (2026-01-30)
+
+
+### ✨ Features
+
+* **guardian:** ein Test ([4848304](https://github.com/strausmann/dockhand-guardian/commit/4848304771002c0fd2c71777ae7c1529c9bb8c51))
+
+
+### 📚 Documentation
+
+* **docs:** update documentation with modern tooling and deployment examples ([07813ed](https://github.com/strausmann/dockhand-guardian/commit/07813ed825ca635e0c46e54a8c23e305cedca57e))
+
+
+### 🔧 CI/CD
+
+* **ci:** configure cz-customizable with scope selection ([2d333a2](https://github.com/strausmann/dockhand-guardian/commit/2d333a27b954ebc634d4b4992b885498478340d8))
+
 ## [1.4.1](https://github.com/strausmann/dockhand-guardian/compare/v1.4.0...v1.4.1) (2026-01-30)
 
 
