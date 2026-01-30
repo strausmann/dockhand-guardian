@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.3](https://github.com/strausmann/dockhand-guardian/compare/v1.6.2...v1.6.3) (2026-01-30)
+
+
+### ♻️ Code Refactoring
+
+* **compose:** remove duplicate docker-compose.yml, use root-level file ([5aac1bf](https://github.com/strausmann/dockhand-guardian/commit/5aac1bf936f5f9099195654ee36d601373c7b18e))
+
 ## [1.6.2](https://github.com/strausmann/dockhand-guardian/compare/v1.6.1...v1.6.2) (2026-01-30)
 
 
