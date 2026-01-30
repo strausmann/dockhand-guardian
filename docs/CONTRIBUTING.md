@@ -99,7 +99,124 @@ pip install -e .[dev]
 
 # Development tooling (commitizen, commitlint, husky)
 npm install
+
+# Install pre-commit hooks
+pre-commit install
 ```
+
+### Code Quality Tools
+
+This project uses modern Python tooling for code quality:
+
+- **[Ruff](https://docs.astral.sh/ruff/)** - Ultra-fast linter and formatter (replaces flake8,
+  black, isort, pylint)
+- **[mypy](https://mypy-lang.org/)** - Static type checking
+- **[pre-commit](https://pre-commit.com/)** - Automated Git hooks
+- **[prettier](https://prettier.io/)** - YAML, Markdown, and JSON formatting
+- **[pytest](https://pytest.org/)** - Testing framework with coverage
+
+```bash
+# Manual code quality checks
+make lint              # Run ruff linting
+make format            # Auto-format with ruff & prettier
+make format-check      # Check formatting without changes
+make type-check        # Run mypy type checking
+make test              # Run tests with coverage
+
+# Run all checks
+pre-commit run --all-files
+```
+
+### Automatic Pre-Commit Checks
+
+When you commit, the following checks run **automatically** via pre-commit hooks:
+
+1. ✨ **Ruff** - Auto-fixes code issues and formats Python
+2. 🔍 **mypy** - Validates type hints
+3. ✂️ **Trailing whitespace** - Removes trailing spaces
+4. 📝 **prettier** - Auto-formats YAML, Markdown, and JSON files
+5. ✅ **Validators** - Checks YAML/JSON syntax
+6. 🧪 **pytest** - Runs test suite
+
+#### What happens if hooks modify files?
+
+If pre-commit hooks auto-format your files (e.g., prettier, ruff), the commit will **fail** with a
+message like:
+
+```
+prettier.................................................................Failed
+- hook id: prettier
+- files were modified by this hook
+
+your-file.json
+```
+
+**This is expected behavior!** The hooks have automatically fixed your files. You need to:
+
+1. **Stage the auto-formatted files:**
+   ```bash
+   git add -A
+   ```
+2. **Commit again:**
+   ```bash
+   git commit -m "your message"
+   ```
+
+**Example workflow:**
+
+```bash
+# First attempt - hooks auto-format files
+$ git commit -m "feat(webhook): add new notification service"
+prettier.................................................................Failed
+- files were modified by this hook
+
+# Stage the formatted files and try again
+$ git add -A
+$ git commit -m "feat(webhook): add new notification service"
+ruff.....................................................................Passed
+prettier.................................................................Passed
+mypy.....................................................................Passed
+pytest...................................................................Passed
+[main abc1234] feat(webhook): add new notification service
+```
+
+> [!TIP] To avoid surprises, run `make format` before committing. This formats all files upfront so
+> the commit succeeds on the first try.
+
+#### Do pre-commit hooks guarantee CI success?
+
+Pre-commit hooks catch **most CI failures** but not all:
+
+**✅ Covered by pre-commit hooks:**
+
+- Ruff linting and formatting
+- mypy type checking
+- prettier formatting (YAML, JSON, Markdown)
+- pytest tests
+- YAML/JSON syntax validation
+
+**⚠️ NOT covered by pre-commit hooks:**
+
+- **Commit message validation** (commitlint) - Only runs in CI
+- **Docker build** - Only runs in CI
+
+**To ensure CI success, also check:**
+
+```bash
+# Validate commit message
+npx commitlint --from HEAD~1
+
+# Test Docker build
+make build
+```
+
+**Or run the full CI simulation:**
+
+```bash
+make check && npx commitlint --from HEAD~1 && make build
+```
+
+This checks everything that CI will check!
 
 ### Local Development
 
@@ -121,17 +238,58 @@ docker compose logs -f guardian
 
 ```bash
 # Run tests with pytest
-pytest test_guardian.py
+make test
 
-# Run with coverage
-pytest --cov=guardian test_guardian.py
+# Run with coverage report
+pytest tests/ --cov=src --cov-report=html
 
-# Run linting
+# Run specific test
+pytest tests/test_guardian.py::test_environment_parsing -v
+```
+
+### Code Quality Checks
+
+```bash
+# Lint Python code
 make lint
 
-# Run all checks
+# Format code (auto-fix)
+make format
+
+# Check formatting only
+make format-check
+
+# Type checking
+make type-check
+
+# Run all pre-commit checks
+pre-commit run --all-files
+
+# Run all quality checks (recommended before PR)
 make check
 ```
+
+> [!TIP] **`make check` vs CI Workflows:**
+>
+> `make check` covers most CI checks:
+>
+> - ✅ Ruff linting (`lint.yml`)
+> - ✅ Ruff formatting (`lint.yml`)
+> - ✅ Prettier formatting (`lint.yml`)
+> - ✅ mypy type checking (`lint.yml`)
+> - ✅ pytest tests (`test.yml`)
+> - ✅ Quick ruff check (`test.yml`)
+>
+> **Not covered by `make check`:**
+>
+> - ⚠️ **Commit message validation** - Use `npx commitlint --from HEAD~1` to check locally
+> - ⚠️ **Docker build** - Use `make build` or `docker build -f docker/Dockerfile .`
+>
+> For complete CI simulation, run:
+>
+> ```bash
+> make check && npx commitlint --from HEAD~1 && make build
+> ```
 
 ## 📝 Commit Guidelines
 
@@ -182,11 +340,35 @@ scopes:
 
 ### Using Commitizen (Recommended)
 
-```bash
-# Interactive commit helper
-npm run commit
+Commitizen provides an interactive wizard to create properly formatted commits:
 
-# Or use git directly
+```bash
+# Interactive commit helper (includes quality checks)
+npm run commit
+```
+
+This command will:
+
+1. **Run `make check`** - Validates code quality, tests, formatting
+2. **Launch commitizen wizard** - If checks pass
+3. **Guide you through commit creation:**
+   - Type selection (feat, fix, docs, etc.)
+   - Scope selection (from available scopes)
+   - Short description
+   - Long description (optional)
+   - Breaking changes (optional)
+   - Related issues (optional)
+
+> [!NOTE] `npm run commit` now automatically runs `make check` before the wizard. If quality checks
+> fail, fix the issues and run the command again.
+
+**Or use git directly** if you're familiar with the format:
+
+```bash
+# Run checks manually first
+make check
+
+# Then commit
 git commit -m "feat(monitoring): add TCP port health check"
 ```
 
@@ -226,8 +408,20 @@ BREAKING CHANGE: MONITORED_CONTAINERS now uses semicolon separator instead of co
 4. **Test your changes**:
 
    ```bash
-   make check
-   pytest
+   # Run all tests
+   make test
+
+   # Run linting
+   make lint
+
+   # Check formatting
+   make format-check
+
+   # Type checking
+   make type-check
+
+   # Or run all pre-commit checks
+   pre-commit run --all-files
    ```
 
 5. **Push to your fork**:
@@ -244,9 +438,11 @@ BREAKING CHANGE: MONITORED_CONTAINERS now uses semicolon separator instead of co
 7. **Wait for review** - maintainers will review your PR and may request changes
 
 8. **CI checks must pass**:
-   - ✅ Commit message validation
-   - ✅ Python linting (flake8, black, isort)
-   - ✅ Tests passing
+   - ✅ Commit message validation (commitlint)
+   - ✅ Python linting (ruff)
+   - ✅ Type checking (mypy)
+   - ✅ Code formatting (ruff, prettier)
+   - ✅ Tests passing (pytest)
    - ✅ Docker build successful
 
 ## 🚢 Release Process

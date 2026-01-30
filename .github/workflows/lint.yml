@@ -45,5 +45,8 @@ jobs:
           ruff check src/ tests/
           ruff format --check src/ tests/
 
+      - name: Format check with prettier
+        run: npm run format:check
+
       - name: Type check with mypy
         run: mypy src/ --ignore-missing-imports

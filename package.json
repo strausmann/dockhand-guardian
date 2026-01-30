@@ -31,19 +31,27 @@
     "@semantic-release/release-notes-generator": "^12.1.0",
     "commitizen": "^4.3.1",
     "conventional-changelog-conventionalcommits": "^7.0.2",
-    "cz-conventional-changelog": "^3.3.0",
+    "cz-customizable": "^7.2.1",
     "husky": "^9.1.7",
     "prettier": "^3.2.5",
     "semantic-release": "^23.0.0"
   },
   "scripts": {
     "semantic-release": "semantic-release",
-    "commit": "cz",
+    "commit": "make check && git-cz",
     "prepare": "husky install",
     "format": "prettier --write \"**/*.{json,yml,yaml,md}\"",
     "format:check": "prettier --check \"**/*.{json,yml,yaml,md}\""
   },
   "publishConfig": {
     "access": "public"
+  },
+  "config": {
+    "commitizen": {
+      "path": "./node_modules/cz-customizable"
+    },
+    "cz-customizable": {
+      "config": ".cz-config.js"
+    }
   }
 }
