@@ -29,6 +29,7 @@ help:
 	@echo ""
 	@echo "Git Workflow:"
 	@echo "  make commit          Interactive commit with quality checks (commitizen)"
+	@echo "  make amend           Add changes to last commit (git commit --amend)"
 	@echo "  make push            Pull with rebase and push to remote"
 	@echo "  make diff            Show unstaged changes"
 	@echo "  make log             Show formatted git log"
@@ -141,6 +142,14 @@ check:
 commit:
 	@echo "📝 Starting interactive commit with quality checks..."
 	@npm run commit
+
+amend:
+	@echo "📝 Adding changes to last commit..."
+	@git add -A
+	@git commit --amend --no-edit
+	@echo ""
+	@echo "✅ Changes added to last commit!"
+	@echo "⚠️  Run 'git push --force-with-lease' to update remote (only if already pushed)"
 
 push:
 	@echo "🔄 Pulling latest changes with rebase..."
