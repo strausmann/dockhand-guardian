@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Example application container to be monitored
   dockhand-app:

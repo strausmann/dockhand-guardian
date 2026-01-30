@@ -1,22 +1,23 @@
 FROM python:3.11-slim
 
-# Install Docker CLI
+# Install curl for downloading docker-compose
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    ca-certificates \
     curl \
-    gnupg && \
-    install -m 0755 -d /etc/apt/keyrings && \
-    curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg && \
-    chmod a+r /etc/apt/keyrings/docker.gpg && \
-    echo \
-    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/debian \
-    $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-    tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt-get update && \
-    apt-get install -y --no-install-recommends docker-ce-cli docker-compose-plugin && \
+    ca-certificates && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
+
+# Install Docker Compose as a standalone binary
+RUN curl -SL https://github.com/docker/compose/releases/download/v2.24.5/docker-compose-linux-x86_64 -o /usr/local/bin/docker-compose && \
+    chmod +x /usr/local/bin/docker-compose && \
+    ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
+
+# Install docker CLI binary
+RUN curl -fsSL https://download.docker.com/linux/static/stable/x86_64/docker-27.4.1.tgz -o docker.tgz && \
+    tar -xzf docker.tgz --strip-components=1 -C /usr/local/bin docker/docker && \
+    rm docker.tgz && \
+    chmod +x /usr/local/bin/docker
 
 # Create app directory
 WORKDIR /app
