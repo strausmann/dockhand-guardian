@@ -147,12 +147,16 @@ def test_failure_tracking():
     guardian.failure_times["test1"] = datetime.now()
 
     # Check grace period not expired
-    elapsed = (datetime.now() - guardian.failure_times["test1"]).total_seconds()
+    failure_time = guardian.failure_times["test1"]
+    assert failure_time is not None
+    elapsed = (datetime.now() - failure_time).total_seconds()
     assert elapsed < guardian.grace_seconds, "Grace period should not be expired immediately"
 
     # Simulate old failure
     guardian.failure_times["test2"] = datetime.now() - timedelta(seconds=70)
-    elapsed = (datetime.now() - guardian.failure_times["test2"]).total_seconds()
+    failure_time2 = guardian.failure_times["test2"]
+    assert failure_time2 is not None
+    elapsed = (datetime.now() - failure_time2).total_seconds()
     assert elapsed >= guardian.grace_seconds, "Grace period should be expired for old failure"
 
     print("✓ Failure tracking works correctly")

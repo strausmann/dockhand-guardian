@@ -7,16 +7,46 @@
       {
         "preset": "conventionalcommits",
         "releaseRules": [
-          { "type": "feat", "release": "minor" },
-          { "type": "fix", "release": "patch" },
-          { "type": "perf", "release": "patch" },
-          { "type": "refactor", "release": "patch" },
-          { "type": "docs", "release": false },
-          { "type": "style", "release": false },
-          { "type": "test", "release": false },
-          { "type": "build", "release": "patch" },
-          { "type": "ci", "release": false },
-          { "type": "chore", "release": false }
+          {
+            "type": "feat",
+            "release": "minor"
+          },
+          {
+            "type": "fix",
+            "release": "patch"
+          },
+          {
+            "type": "perf",
+            "release": "patch"
+          },
+          {
+            "type": "refactor",
+            "release": "patch"
+          },
+          {
+            "type": "docs",
+            "release": false
+          },
+          {
+            "type": "style",
+            "release": false
+          },
+          {
+            "type": "test",
+            "release": false
+          },
+          {
+            "type": "build",
+            "release": "patch"
+          },
+          {
+            "type": "ci",
+            "release": false
+          },
+          {
+            "type": "chore",
+            "release": false
+          }
         ]
       }
     ],
@@ -26,16 +56,51 @@
         "preset": "conventionalcommits",
         "presetConfig": {
           "types": [
-            { "type": "feat", "section": "✨ Features" },
-            { "type": "fix", "section": "🐛 Bug Fixes" },
-            { "type": "perf", "section": "⚡ Performance Improvements" },
-            { "type": "refactor", "section": "♻️ Code Refactoring" },
-            { "type": "docs", "section": "📚 Documentation", "hidden": false },
-            { "type": "style", "section": "💎 Styles", "hidden": true },
-            { "type": "test", "section": "✅ Tests", "hidden": true },
-            { "type": "build", "section": "📦 Build System" },
-            { "type": "ci", "section": "🔧 CI/CD", "hidden": false },
-            { "type": "chore", "section": "🧹 Chores", "hidden": true }
+            {
+              "type": "feat",
+              "section": "\u2728 Features"
+            },
+            {
+              "type": "fix",
+              "section": "\ud83d\udc1b Bug Fixes"
+            },
+            {
+              "type": "perf",
+              "section": "\u26a1 Performance Improvements"
+            },
+            {
+              "type": "refactor",
+              "section": "\u267b\ufe0f Code Refactoring"
+            },
+            {
+              "type": "docs",
+              "section": "\ud83d\udcda Documentation",
+              "hidden": false
+            },
+            {
+              "type": "style",
+              "section": "\ud83d\udc8e Styles",
+              "hidden": true
+            },
+            {
+              "type": "test",
+              "section": "\u2705 Tests",
+              "hidden": true
+            },
+            {
+              "type": "build",
+              "section": "\ud83d\udce6 Build System"
+            },
+            {
+              "type": "ci",
+              "section": "\ud83d\udd27 CI/CD",
+              "hidden": false
+            },
+            {
+              "type": "chore",
+              "section": "\ud83e\uddf9 Chores",
+              "hidden": true
+            }
           ]
         }
       }
