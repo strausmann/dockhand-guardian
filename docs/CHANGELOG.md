@@ -5,6 +5,25 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.6.0](https://github.com/strausmann/dockhand-guardian/compare/v1.5.0...v1.6.0) (2026-01-30)
+
+
+### ✨ Features
+
+* **ci:** add GitHub Actions workflow monitoring commands ([fa324ba](https://github.com/strausmann/dockhand-guardian/commit/fa324bacfcb1b941a3b0ee98c475c194f74e45ee))
+
+
+### 📚 Documentation
+
+* **docs:** add make amend and make push to documentation ([edd34ab](https://github.com/strausmann/dockhand-guardian/commit/edd34ab13889254e128676570586ca4ddbbfff5b))
+* **docs:** document type+scope combinations and commitizen workflow ([533b272](https://github.com/strausmann/dockhand-guardian/commit/533b2727a23f71d3ffc142424e895de2f1d87a56))
+* **docs:** document type+scope combinations and commitizen workflow ([e953ee4](https://github.com/strausmann/dockhand-guardian/commit/e953ee43c9926d8d7565692a932fa653fec5cba2))
+
+
+### 🔧 CI/CD
+
+* **ci:** run make check automatically before every commit ([d528907](https://github.com/strausmann/dockhand-guardian/commit/d528907715c484ed2e9c489f29c584600e827a1a))
+
 ## [1.5.0](https://github.com/strausmann/dockhand-guardian/compare/v1.4.1...v1.5.0) (2026-01-30)
 
 
