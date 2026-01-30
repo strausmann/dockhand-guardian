@@ -1,3 +1,41 @@
+# Dockhand Guardian Change Log
+
+All notable changes to **Dockhand Guardian** will be documented in this file.
+
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## 1.0.0 (2026-01-30)
+
+
+### Features
+
+* **webhook:** integrate apprise for multi-service notifications ([f75e87c](https://github.com/strausmann/dockhand-guardian/commit/f75e87c10ee67072d7e0bf361ca4caa0ad8334cd))
+
+
+### Bug Fixes
+
+* **ci:** add package-lock.json for deterministic builds ([e4f61c6](https://github.com/strausmann/dockhand-guardian/commit/e4f61c6cfbceb76142622c6bfc05a3d9e30d2b36))
+* **ci:** add release scope for semantic-release commits ([3df1e59](https://github.com/strausmann/dockhand-guardian/commit/3df1e59ec99f4f97c35354641ddd4328511f20e4))
+* **ci:** use npm install instead of npm ci for flexibility ([49feaf1](https://github.com/strausmann/dockhand-guardian/commit/49feaf1b471b2fca5c8d77a35fff93ff158359da))
+
+
+### Documentation
+
+* **changelog:** initialize changelog for semantic-release ([9702ef5](https://github.com/strausmann/dockhand-guardian/commit/9702ef54439fbf0686d43e8858a3f48700c4f3bb))
+* **github:** add copilot development instructions ([68aa7c3](https://github.com/strausmann/dockhand-guardian/commit/68aa7c3ff10c206a771c9a679db5668f32e186a1))
+* **github:** add funding configuration ([3c7f478](https://github.com/strausmann/dockhand-guardian/commit/3c7f4784b049f232d926183f16f1d425a5ac426b))
+* **github:** add issue templates for bug reports and features ([7112ca5](https://github.com/strausmann/dockhand-guardian/commit/7112ca56a466025476257f0e3985dc453e136b54))
+* **github:** add pull request template ([cbf0ca8](https://github.com/strausmann/dockhand-guardian/commit/cbf0ca83e8a38f789f7149bd1a4e5463ba26d89d))
+* **github:** document allowed commit scopes ([ee730d3](https://github.com/strausmann/dockhand-guardian/commit/ee730d3047c322fc528171e47f36a42cca61b0ee))
+* **webhook:** add webhook integration documentation ([a595e4d](https://github.com/strausmann/dockhand-guardian/commit/a595e4dde0cf1c91c8315a01de3b43df00fad36e))
+
+
+### Build System
+
+* **deps:** add semantic-release and commit tooling dependencies ([43d3180](https://github.com/strausmann/dockhand-guardian/commit/43d3180b74eea5f5bf187d0066354c7015cf2e0d))
+* **make:** add makefile for development workflow automation ([0209325](https://github.com/strausmann/dockhand-guardian/commit/02093253805840e7444d0b4a02bf98aa4e6d8a7d))
+
 # Dockhand Guardian Change Log 📜📝
 
 All notable changes to **Dockhand Guardian** will be documented in this file.
