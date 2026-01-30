@@ -2,7 +2,7 @@ FROM python:3.11-slim
 
 # OCI Image Labels
 LABEL org.opencontainers.image.title="Dockhand Guardian"
-LABEL org.opencontainers.image.description="Docker sidecar watchdog service for automatic container recovery"
+LABEL org.opencontainers.image.description="Intelligent Docker sidecar watchdog that monitors container health and automatically recovers failed services. Features: Docker health check integration, HTTP endpoint monitoring, configurable grace periods, cooldown protection, maintenance mode, and webhook notifications via Apprise (80+ services including Discord, Slack, Teams)."
 LABEL org.opencontainers.image.authors="Björn Strausmann"
 LABEL org.opencontainers.image.url="https://github.com/strausmann/dockhand-guardian"
 LABEL org.opencontainers.image.documentation="https://github.com/strausmann/dockhand-guardian#readme"

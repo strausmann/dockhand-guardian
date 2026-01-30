@@ -108,7 +108,7 @@ jobs:
             VCS_REF=${{ github.sha }}
           labels: |
             org.opencontainers.image.title=Dockhand Guardian
-            org.opencontainers.image.description=Docker sidecar watchdog service for automatic container recovery
+            org.opencontainers.image.description=Intelligent Docker sidecar watchdog that monitors container health and automatically recovers failed services. Features: Docker health check integration, HTTP endpoint monitoring, configurable grace periods, cooldown protection, maintenance mode, and webhook notifications via Apprise (80+ services including Discord, Slack, Teams).
             org.opencontainers.image.authors=Björn Strausmann
             org.opencontainers.image.url=https://github.com/${{ github.repository }}
             org.opencontainers.image.documentation=https://github.com/${{ github.repository }}#readme
@@ -119,7 +119,7 @@ jobs:
             org.opencontainers.image.licenses=MIT
           annotations: |
             index:org.opencontainers.image.title=Dockhand Guardian
-            index:org.opencontainers.image.description=Docker sidecar watchdog service for automatic container recovery
+            index:org.opencontainers.image.description=Intelligent Docker sidecar watchdog that monitors container health and automatically recovers failed services. Features: Docker health check integration, HTTP endpoint monitoring, configurable grace periods, cooldown protection, maintenance mode, and webhook notifications via Apprise (80+ services including Discord, Slack, Teams).
             index:org.opencontainers.image.authors=Björn Strausmann
             index:org.opencontainers.image.url=https://github.com/${{ github.repository }}
             index:org.opencontainers.image.documentation=https://github.com/${{ github.repository }}#readme
