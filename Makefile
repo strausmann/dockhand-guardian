@@ -1,4 +1,4 @@
-.PHONY: help install update build test lint format format-check type-check check coverage commit push rebase-continue rebase-abort diff log sync clean docker-up docker-down docker-logs docker-restart docker-clean release-dry-run release-notes release status version
+.PHONY: help install update build test lint format format-check type-check check coverage commit amend push rebase-continue rebase-abort diff log sync validate-commit validate-workflows ci-local ci-status ci-logs ci-watch clean docker-up docker-down docker-logs docker-restart docker-clean release-dry-run release-notes release status version
 
 help:
 	@echo "╔════════════════════════════════════════════════════════════╗"
@@ -36,6 +36,14 @@ help:
 	@echo "  make sync            Fetch and show repository status"
 	@echo "  make rebase-continue Continue rebase after resolving conflicts"
 	@echo "  make rebase-abort    Abort rebase and return to previous state"
+	@echo ""
+	@echo "CI/Workflow Validation:"
+	@echo "  make validate-commit Validate last commit message (commitlint)"
+	@echo "  make validate-workflows Check GitHub Actions workflow syntax"
+	@echo "  make ci-local        Run all CI checks locally"
+	@echo "  make ci-status       Show status of GitHub Actions workflows"
+	@echo "  make ci-logs         Show logs of latest workflow run"
+	@echo "  make ci-watch        Watch currently running workflows"
 	@echo ""
 	@echo "Docker Management:"
 	@echo "  make docker-up       Start containers"
@@ -189,6 +197,87 @@ sync:
 	@echo ""
 	@echo "📌 Local branches:"
 	@git branch -vv
+
+# ============================================================================
+# CI/Workflow Validation
+# ============================================================================
+
+validate-commit:
+	@echo "✅ Validating last commit message..."
+	@npx commitlint --from HEAD~1
+
+validate-workflows:
+	@echo "✅ Validating GitHub Actions workflows..."
+	@echo ""
+	@for workflow in .github/workflows/*.yml; do \
+		echo "Checking $$workflow..."; \
+		if ! npx prettier --check $$workflow > /dev/null 2>&1; then \
+			echo "❌ Format error in $$workflow"; \
+			npx prettier --check $$workflow; \
+			exit 1; \
+		fi; \
+	done
+	@echo ""
+	@echo "✅ All workflows valid!"
+
+ci-local:
+	@echo "🔍 Running all CI checks locally..."
+	@echo ""
+	@echo "1️⃣  Code quality checks..."
+	@$(MAKE) check
+	@echo ""
+	@echo "2️⃣  Commit message validation..."
+	@$(MAKE) validate-commit
+	@echo ""
+	@echo "3️⃣  Workflow syntax validation..."
+	@$(MAKE) validate-workflows
+	@echo ""
+	@echo "4️⃣  Docker build test..."
+	@$(MAKE) build
+	@echo ""
+	@echo "✅ All CI checks passed!"
+
+ci-status:
+	@echo "📊 GitHub Actions Workflow Status"
+	@echo "════════════════════════════════════════════════════════════"
+	@echo ""
+	@gh run list --limit 10 --json conclusion,name,headBranch,status,createdAt,url \
+		--jq '.[] | "[\(.conclusion // .status)] \(.name) (\(.headBranch)) - \(.createdAt | split("T")[0]) \(.createdAt | split("T")[1] | split(".")[0])\n  \(.url)"' \
+		| sed 's/\[success\]/✅ SUCCESS/g' \
+		| sed 's/\[failure\]/❌ FAILURE/g' \
+		| sed 's/\[cancelled\]/⚠️  CANCELLED/g' \
+		| sed 's/\[in_progress\]/🔄 RUNNING/g' \
+		| sed 's/\[queued\]/⏳ QUEUED/g' \
+		|| echo "❌ Error: GitHub CLI not authenticated. Run 'gh auth login'"
+
+ci-logs:
+	@echo "📋 Showing logs from latest workflow run..."
+	@echo "════════════════════════════════════════════════════════════"
+	@echo ""
+	@latest_run=$$(gh run list --limit 1 --json databaseId --jq '.[0].databaseId'); \
+	if [ -n "$$latest_run" ]; then \
+		gh run view $$latest_run --log-failed || gh run view $$latest_run --log; \
+	else \
+		echo "❌ No workflow runs found"; \
+	fi
+
+ci-watch:
+	@echo "👀 Watching currently running workflows..."
+	@echo "════════════════════════════════════════════════════════════"
+	@echo ""
+	@running_run=$$(gh run list --limit 1 --json status,databaseId --jq '.[] | select(.status=="in_progress") | .databaseId'); \
+	if [ -n "$$running_run" ]; then \
+		gh run watch $$running_run; \
+	else \
+		echo "ℹ️  No workflows currently running"; \
+		echo ""; \
+		echo "Latest workflow runs:"; \
+		gh run list --limit 5; \
+	fi
+
+# ============================================================================
+# Docker Management
+# ============================================================================
 
 docker-up:
 	@echo "🚀 Starting containers..."

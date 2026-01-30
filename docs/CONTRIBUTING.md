@@ -129,14 +129,21 @@ pre-commit run --all-files
 
 ### Automatic Pre-Commit Checks
 
-When you commit, the following checks run **automatically** via pre-commit hooks:
+When you commit (via `git commit` or `make commit`), **all quality checks run automatically** via
+pre-commit hooks:
 
-1. ✨ **Ruff** - Auto-fixes code issues and formats Python
-2. 🔍 **mypy** - Validates type hints
-3. ✂️ **Trailing whitespace** - Removes trailing spaces
-4. 📝 **prettier** - Auto-formats YAML, Markdown, and JSON files
-5. ✅ **Validators** - Checks YAML/JSON syntax
-6. 🧪 **pytest** - Runs test suite
+1. 🔍 **make check** - Runs all quality checks in one step:
+   - ✨ Ruff linting and formatting
+   - 🔍 mypy type checking
+   - 📝 prettier formatting (YAML/JSON/Markdown)
+   - 🧪 pytest test suite
+2. ✂️ **Trailing whitespace** - Removes trailing spaces
+3. 📝 **File fixers** - Fixes end of files
+4. ✅ **Validators** - Checks YAML/JSON syntax
+
+> [!IMPORTANT] **Every commit now runs `make check` automatically**, including all tests. This
+> ensures no commit can bypass quality checks, whether you use `git commit -m "..."` or
+> `make commit`.
 
 #### What happens if hooks modify files?
 
@@ -185,29 +192,44 @@ pytest...................................................................Passed
 
 #### Do pre-commit hooks guarantee CI success?
 
-Pre-commit hooks catch **most CI failures** but not all:
+Pre-commit hooks catch **almost all CI failures**:
 
 **✅ Covered by pre-commit hooks:**
 
-- Ruff linting and formatting
-- mypy type checking
-- prettier formatting (YAML, JSON, Markdown)
-- pytest tests
-- YAML/JSON syntax validation
+- ✅ Ruff linting and formatting
+- ✅ mypy type checking
+- ✅ prettier formatting (YAML, JSON, Markdown)
+- ✅ pytest tests (all test suite)
+- ✅ YAML/JSON syntax validation
 
 **⚠️ NOT covered by pre-commit hooks:**
 
-- **Commit message validation** (commitlint) - Only runs in CI
+- **Commit message validation** (commitlint) - Only runs in CI on PRs
 - **Docker build** - Only runs in CI
 
-**To ensure CI success, also check:**
+**To simulate full CI locally:**
 
 ```bash
-# Validate commit message
-npx commitlint --from HEAD~1
+# Run all local checks
+make check
+
+# Validate commit message format
+make validate-commit
 
 # Test Docker build
 make build
+
+# Or run everything locally
+make ci-local
+
+# Check GitHub Actions status
+make ci-status
+
+# View logs of latest workflow
+make ci-logs
+
+# Watch currently running workflows
+make ci-watch
 ```
 
 **Or run the full CI simulation:**

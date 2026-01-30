@@ -464,6 +464,14 @@ make check             # Lint + format-check + type-check + tests
 make commit            # Interactive commit with quality checks
 make amend             # Add changes to last commit
 make push              # Pull with rebase and push
+
+# CI/Workflow validation
+make validate-commit   # Validate commit message format
+make validate-workflows # Check workflow syntax
+make ci-local          # Run all CI checks locally
+make ci-status         # Show GitHub Actions status
+make ci-logs           # Show logs of latest workflow
+make ci-watch          # Watch running workflows
 ```
 
 ### Running Locally
