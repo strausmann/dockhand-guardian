@@ -5,6 +5,13 @@ All notable changes to **Dockhand Guardian** will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1](https://github.com/strausmann/dockhand-guardian/compare/v1.3.0...v1.3.1) (2026-01-30)
+
+
+### ♻️ Code Refactoring
+
+* **structure:** reorganize project into clear directory structure ([eea25ff](https://github.com/strausmann/dockhand-guardian/commit/eea25ff571ed986062a2ef5908b04ba9ec781131))
+
 ## [1.3.0](https://github.com/strausmann/dockhand-guardian/compare/v1.2.0...v1.3.0) (2026-01-30)
 
 
