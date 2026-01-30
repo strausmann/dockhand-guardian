@@ -57,6 +57,13 @@ services:
       
       # Optional HTTP health checks (format: container=url,container2=url2)
       # HTTP_CHECKS: dockhand-app=http://dockhand-app:80/health
+      
+      # Webhook notifications via Apprise (80+ services supported)
+      # Single service:
+      # WEBHOOK_URLS: discord://webhook_id/webhook_token
+      # Multiple services (comma-separated):
+      # WEBHOOK_URLS: discord://ID/TOKEN,msteams://A/B/C/
+      # See: https://github.com/caronc/apprise/wiki
     
     volumes:
       # Mount Docker socket to communicate with Docker daemon

@@ -14,6 +14,7 @@ from datetime import datetime, timedelta
 from typing import Dict, List, Optional
 import docker
 import requests
+import apprise
 
 # Configure logging
 logging.basicConfig(
@@ -39,6 +40,18 @@ class ContainerGuardian:
         self.maintenance_file = os.getenv('MAINTENANCE_FILE', '.maintenance')
         self.http_checks = self._parse_http_checks()
         
+        # Webhook configuration via Apprise
+        self.webhook_urls = os.getenv('WEBHOOK_URLS', '').strip()
+        self.webhook_enabled = bool(self.webhook_urls)
+        
+        # Initialize Apprise
+        self.apprise = apprise.Apprise()
+        if self.webhook_enabled:
+            for url in self.webhook_urls.split(','):
+                url = url.strip()
+                if url:
+                    self.apprise.add(url)
+        
         # State tracking
         self.failure_times: Dict[str, Optional[datetime]] = {name: None for name in self.monitored_containers}
         self.last_recovery_time: Optional[datetime] = None
@@ -58,6 +71,7 @@ class ContainerGuardian:
         logger.info(f"  Cooldown: {self.cooldown_seconds}s")
         logger.info(f"  Stack directory: {self.stack_dir}")
         logger.info(f"  HTTP checks: {len(self.http_checks)} configured")
+        logger.info(f"  Webhook notifications: {'enabled (' + str(len(self.apprise)) + ' service(s))' if self.webhook_enabled else 'disabled'}")
     
     def _parse_http_checks(self) -> Dict[str, str]:
         """Parse HTTP_CHECKS environment variable.
@@ -71,6 +85,42 @@ class ContainerGuardian:
                     container, url = check.split('=', 1)
                     http_checks[container.strip()] = url.strip()
         return http_checks
+    
+    def send_webhook_notification(self, containers: List[str], success: bool):
+        """Send webhook notification about recovery action via Apprise.
+        
+        Args:
+            containers: List of container names that triggered recovery
+            success: Whether the recovery was successful
+        """
+        if not self.webhook_enabled:
+            return
+        
+        try:
+            timestamp = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            container_list = ', '.join(containers)
+            status_emoji = "✅" if success else "❌"
+            status_text = "Recovery Successful" if success else "Recovery Failed"
+            
+            title = f"{status_emoji} Dockhand Guardian Alert"
+            body = f"**{status_text}**\n\n" \
+                   f"🐳 **Affected Containers:**\n" + \
+                   '\n'.join([f"  • {c}" for c in containers]) + \
+                   f"\n\n⏰ **Timestamp:** {timestamp}"
+            
+            # Send notification via Apprise
+            result = self.apprise.notify(
+                title=title,
+                body=body
+            )
+            
+            if result:
+                logger.info(f"Webhook notification sent successfully to {len(self.apprise)} service(s)")
+            else:
+                logger.warning("Webhook notification failed for some or all services")
+                
+        except Exception as e:
+            logger.error(f"Failed to send webhook notification: {e}")
     
     def is_maintenance_mode(self) -> bool:
         """Check if maintenance mode is active."""
@@ -181,6 +231,9 @@ class ContainerGuardian:
         logger.warning("INITIATING STACK RECOVERY")
         logger.warning("=" * 60)
         
+        recovery_success = False
+        failed_containers = [name for name, time in self.failure_times.items() if time is not None]
+        
         try:
             # Change to stack directory
             os.chdir(self.stack_dir)
@@ -213,6 +266,7 @@ class ContainerGuardian:
                 raise Exception("Recovery failed")
             else:
                 logger.info("Containers recreated successfully")
+                recovery_success = True
             
             # Update recovery time and reset failure tracking
             self.last_recovery_time = datetime.now()
@@ -226,6 +280,9 @@ class ContainerGuardian:
         except Exception as e:
             logger.error(f"Recovery failed with error: {e}")
             self.last_recovery_time = datetime.now()  # Set cooldown even on failure
+        finally:
+            # Send webhook notification
+            self.send_webhook_notification(failed_containers, recovery_success)
     
     def monitor_containers(self):
         """Main monitoring loop."""

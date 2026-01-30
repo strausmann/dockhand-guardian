@@ -15,6 +15,7 @@ Dockhand Guardian is a lightweight Python-based monitoring service that watches 
 - **Maintenance Mode**: Support for maintenance flag file to pause monitoring
 - **Cooldown Period**: Prevents recovery loops with configurable cooldown
 - **Docker Socket Communication**: Direct communication with Docker daemon (no external API needed)
+- **Webhook Notifications**: Send alerts to Discord, Teams, or generic webhooks when recovery is triggered
 - **Configurable**: All parameters configurable via environment variables
 
 ## Quick Start
@@ -48,6 +49,7 @@ All configuration is done via environment variables:
 | `STACK_DIR` | Directory containing docker-compose.yml | `/stack` |
 | `MAINTENANCE_FILE` | Maintenance mode flag file name | `.maintenance` |
 | `HTTP_CHECKS` | Optional HTTP checks (format: `container=url,container2=url2`) | _(empty)_ |
+| `WEBHOOK_URLS` | Webhook URLs for notifications (comma-separated Apprise URLs) | _(empty)_ |
 
 ### Example Configuration
 
@@ -59,6 +61,72 @@ environment:
   COOLDOWN_SECONDS: 600
   HTTP_CHECKS: dockhand-app=http://dockhand-app:80/health
 ```
+
+## Webhook Notifications
+
+Guardian uses [Apprise](https://github.com/caronc/apprise) for webhook notifications, supporting 80+ notification services including Discord, Microsoft Teams, Slack, Telegram, Email, and many more.
+
+### Quick Setup
+
+Configure notifications via Apprise URLs:
+
+```yaml
+environment:
+  # Single service
+  WEBHOOK_URLS: discord://webhook_id/webhook_token
+  
+  # Multiple services (comma-separated)
+  WEBHOOK_URLS: discord://webhook_id/token,mailto://user:pass@gmail.com
+```
+
+### Discord
+
+1. Create webhook in Discord:
+   - Server Settings → Integrations → Webhooks → New Webhook
+   - Copy webhook URL: `https://discord.com/api/webhooks/ID/TOKEN`
+
+2. Configure guardian:
+   ```yaml
+   WEBHOOK_URLS: discord://webhook_id/webhook_token
+   ```
+
+### Microsoft Teams
+
+1. Create webhook in Teams:
+   - Channel → Connectors → Incoming Webhook
+   - Copy webhook URL
+
+2. Configure guardian:
+   ```yaml
+   WEBHOOK_URLS: msteams://TokenA/TokenB/TokenC/
+   ```
+
+### Slack
+
+1. Create Slack App with incoming webhook
+2. Configure guardian:
+   ```yaml
+   WEBHOOK_URLS: slack://TokenA/TokenB/TokenC/
+   ```
+
+### Multiple Services
+
+Send notifications to multiple services simultaneously:
+
+```yaml
+WEBHOOK_URLS: discord://ID/TOKEN,msteams://A/B/C/,slack://X/Y/Z/
+```
+
+### More Services
+
+Apprise supports 80+ services. See [Apprise documentation](https://github.com/caronc/apprise/wiki) for all supported URLs:
+- Email (SMTP, Gmail, etc.)
+- Telegram
+- Matrix
+- Pushover
+- IFTTT
+- Custom JSON endpoints
+- And many more!
 
 ## Maintenance Mode
 
