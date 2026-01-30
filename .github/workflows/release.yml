@@ -9,10 +9,14 @@ permissions:
   contents: write
   issues: write
   pull-requests: write
+  packages: write
 
 jobs:
   release:
     runs-on: ubuntu-latest
+    outputs:
+      new_release_published: ${{ steps.semantic.outputs.new_release_published }}
+      new_release_version: ${{ steps.semantic.outputs.new_release_version }}
 
     steps:
       - name: Checkout
@@ -30,15 +34,71 @@ jobs:
         run: npm install
 
       - name: Release
-        id: semantic-release
+        id: semantic
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release
+        run: |
+          npx semantic-release > release_output.txt 2>&1
+          cat release_output.txt
+          
+          # Check if a new release was published
+          if grep -q "Published release" release_output.txt; then
+            echo "new_release_published=true" >> $GITHUB_OUTPUT
+            # Extract version from the output
+            VERSION=$(grep "Published release" release_output.txt | sed -n 's/.*Published release \([0-9.]*\).*/\1/p' | head -1)
+            echo "new_release_version=${VERSION}" >> $GITHUB_OUTPUT
+            echo "New release: ${VERSION}"
+          else
+            echo "new_release_published=false" >> $GITHUB_OUTPUT
+            echo "No new release"
+          fi
 
-      - name: Trigger Docker Build
-        if: steps.semantic-release.outputs.new_release_published == 'true'
-        uses: peter-evans/repository-dispatch@v3
+  docker:
+    needs: release
+    if: needs.release.outputs.new_release_published == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          event-type: release-published
-          client-payload: '{"version": "${{ steps.semantic-release.outputs.new_release_version }}"}'
+          ref: v${{ needs.release.outputs.new_release_version }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into registry ghcr.io
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract version tags
+        id: version
+        run: |
+          VERSION="${{ needs.release.outputs.new_release_version }}"
+          MAJOR=$(echo $VERSION | cut -d. -f1)
+          MINOR=$(echo $VERSION | cut -d. -f2)
+          
+          echo "version=${VERSION}" >> $GITHUB_OUTPUT
+          echo "major=${MAJOR}" >> $GITHUB_OUTPUT
+          echo "minor=${MINOR}" >> $GITHUB_OUTPUT
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          file: docker/Dockerfile
+          push: true
+          tags: |
+            ghcr.io/${{ github.repository }}:latest
+            ghcr.io/${{ github.repository }}:${{ steps.version.outputs.version }}
+            ghcr.io/${{ github.repository }}:${{ steps.version.outputs.major }}.${{ steps.version.outputs.minor }}
+            ghcr.io/${{ github.repository }}:${{ steps.version.outputs.major }}
+          platforms: linux/amd64,linux/arm64
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
