@@ -38,20 +38,12 @@
   },
   "scripts": {
     "semantic-release": "semantic-release",
-    "commit": "make check && git-cz",
+    "commit": "make check && cz",
     "prepare": "husky install",
     "format": "prettier --write \"**/*.{json,yml,yaml,md}\"",
     "format:check": "prettier --check \"**/*.{json,yml,yaml,md}\""
   },
   "publishConfig": {
     "access": "public"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-customizable"
-    },
-    "cz-customizable": {
-      "config": ".cz-config.js"
-    }
   }
 }
