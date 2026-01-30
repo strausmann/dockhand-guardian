@@ -281,21 +281,21 @@ ci-watch:
 
 docker-up:
 	@echo "🚀 Starting containers..."
-	docker-compose -f docker/docker-compose.yml up -d
+	docker compose up -d
 	@sleep 2
 	@echo "✅ Containers started"
 
 docker-down:
 	@echo "🛑 Stopping containers..."
-	docker-compose -f docker/docker-compose.yml down
+	docker compose down
 
 docker-logs:
 	@echo "📋 Showing logs..."
-	docker-compose -f docker/docker-compose.yml logs -f guardian
+	docker compose logs -f guardian
 
 docker-restart:
 	@echo "🔄 Restarting guardian..."
-	docker-compose -f docker/docker-compose.yml restart guardian
+	docker compose restart guardian
 	@sleep 2
 	@echo "✅ Guardian restarted"
 
@@ -315,7 +315,7 @@ docker-clean:
 
 status:
 	@echo "📊 Container status:"
-	@docker-compose -f docker/docker-compose.yml ps
+	@docker compose ps
 
 version:
 	@echo "Version: $$(git describe --tags --abbrev=0 2>/dev/null || echo 'unreleased')"
@@ -356,6 +356,6 @@ release:
 
 clean:
 	@echo "🧹 Cleaning up..."
-	docker-compose down -v
+	docker compose down -v
 	docker rmi dockhand-guardian:latest 2>/dev/null || true
 	@echo "✅ Cleanup complete"
