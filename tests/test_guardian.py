@@ -8,8 +8,8 @@ import os
 import sys
 from datetime import datetime, timedelta
 
-# Add the current directory to path
-sys.path.insert(0, os.path.dirname(__file__))
+# Add the src directory to path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', 'src'))
 
 def test_environment_parsing():
     """Test environment variable parsing."""

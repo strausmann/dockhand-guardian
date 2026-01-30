@@ -41,10 +41,10 @@ jobs:
         pip install flake8 pylint black isort
     
     - name: Lint with flake8
-      run: flake8 guardian.py test_guardian.py --max-line-length=127
+      run: flake8 src/ tests/ --max-line-length=127
     
     - name: Check formatting with black
-      run: black --check guardian.py test_guardian.py
+      run: black --check src/ tests/
     
     - name: Check import sorting
-      run: isort --check-only guardian.py test_guardian.py
+      run: isort --check-only src/ tests/

@@ -6,10 +6,10 @@ help:
 	@echo "╚════════════════════════════════════════════════════════════╝"
 	@echo ""
 	@echo "📚 REPOSITORY STRUKTUR:"
-	@echo "  guardian.py          → Main watchdog application"
-	@echo "  Dockerfile           → Container image definition"
-	@echo "  docker-compose.yml   → Example deployment"
-	@echo "  test_guardian.py     → Unit tests"
+	@echo "  src/                 → Main application code"
+	@echo "  tests/               → Unit tests"
+	@echo "  docker/              → Docker & docker-compose files"
+	@echo "  docs/                → Documentation (README, CONTRIBUTING)"
 	@echo ""
 	@echo "🚀 VERFÜGBARE BEFEHLE:"
 	@echo ""
@@ -36,40 +36,40 @@ help:
 
 build:
 	@echo "🔨 Building Docker image..."
-	docker build -t dockhand-guardian:latest .
+	docker build -f docker/Dockerfile -t dockhand-guardian:latest .
 
 test:
 	@echo "🧪 Running tests..."
-	python3 -m pytest test_guardian.py -v
+	python3 -m pytest tests/ -v
 
 lint:
 	@echo "🔍 Checking code quality..."
-	@python3 -m py_compile guardian.py && echo "✅ Python syntax OK"
-	@python3 -m py_compile test_guardian.py && echo "✅ Test syntax OK"
+	@python3 -m py_compile src/guardian.py && echo "✅ Python syntax OK"
+	@python3 -m py_compile tests/test_guardian.py && echo "✅ Test syntax OK"
 
 docker-up:
 	@echo "🚀 Starting containers..."
-	docker-compose up -d
+	docker-compose -f docker/docker-compose.yml up -d
 	@sleep 2
 	@echo "✅ Containers started"
 
 docker-down:
 	@echo "🛑 Stopping containers..."
-	docker-compose down
+	docker-compose -f docker/docker-compose.yml down
 
 docker-logs:
 	@echo "📋 Showing logs..."
-	docker-compose logs -f guardian
+	docker-compose -f docker/docker-compose.yml logs -f guardian
 
 docker-restart:
 	@echo "🔄 Restarting guardian..."
-	docker-compose restart guardian
+	docker-compose -f docker/docker-compose.yml restart guardian
 	@sleep 2
 	@echo "✅ Guardian restarted"
 
 status:
 	@echo "📊 Container status:"
-	@docker-compose ps
+	@docker-compose -f docker/docker-compose.yml ps
 
 version:
 	@echo "Version: $$(git describe --tags --abbrev=0 2>/dev/null || echo 'unreleased')"
