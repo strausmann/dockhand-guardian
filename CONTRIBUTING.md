@@ -236,16 +236,22 @@ Dependabot runs **daily** at 03:00 UTC and checks:
 
 | Ecosystem | Commit Type | Release Impact | Auto-Merge |
 |-----------|-------------|----------------|------------|
-| 🐳 Docker base images | `fix(deps)` | ✅ Patch release + Docker publish | Manual |
-| 🐍 Python packages | `fix(deps)` | ✅ Patch release + Docker publish | Manual |
-| ⚙️ GitHub Actions | `chore(deps)` | ❌ No release | Manual |
-| 📦 npm packages | `chore(deps)` | ❌ No release | Manual |
+| 🐳 Docker base images | `fix(deps)` | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
+| 🐍 Python packages | `fix(deps)` | ✅ Patch release + Docker publish | ✅ Patch/Minor only |
+| ⚙️ GitHub Actions | `chore(deps)` | ❌ No release | ✅ Patch/Minor only |
+| 📦 npm packages | `chore(deps)` | ❌ No release | ✅ Patch/Minor only |
+
+**Automatic Merge Behavior:**
+- ✅ **Patch updates** (1.2.3 → 1.2.4): Auto-approved and auto-merged after CI passes
+- ✅ **Minor updates** (1.2.0 → 1.3.0): Auto-approved and auto-merged after CI passes
+- ⚠️ **Major updates** (1.0.0 → 2.0.0): Requires manual review (potential breaking changes)
 
 **Important:** Production-relevant dependency updates (Docker, Python) automatically trigger:
 1. Patch version bump (e.g., `1.2.3` → `1.2.4`)
 2. New GitHub Release
 3. Docker image build and publish to GHCR
 4. Multi-platform builds (amd64 + arm64)
+5. Fully automated from Dependabot PR → Release → Docker Image
 
 ## 💡 Development Tips
 
