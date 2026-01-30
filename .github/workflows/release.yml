@@ -40,7 +40,7 @@ jobs:
         run: |
           npx semantic-release > release_output.txt 2>&1
           cat release_output.txt
-          
+
           # Check if a new release was published
           if grep -q "Published release" release_output.txt; then
             echo "new_release_published=true" >> $GITHUB_OUTPUT
@@ -83,7 +83,7 @@ jobs:
           VERSION="${{ needs.release.outputs.new_release_version }}"
           MAJOR=$(echo $VERSION | cut -d. -f1)
           MINOR=$(echo $VERSION | cut -d. -f2)
-          
+
           echo "version=${VERSION}" >> $GITHUB_OUTPUT
           echo "major=${MAJOR}" >> $GITHUB_OUTPUT
           echo "minor=${MINOR}" >> $GITHUB_OUTPUT

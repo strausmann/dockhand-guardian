@@ -4,6 +4,9 @@
 [![License](https://img.shields.io/github/license/strausmann/dockhand-guardian)](LICENSE)
 [![Python](https://img.shields.io/badge/python-3.11+-blue.svg)](https://www.python.org/downloads/)
 [![Docker](https://img.shields.io/badge/docker-required-blue.svg)](https://www.docker.com/)
+[![Ruff](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/ruff/main/assets/badge/v2.json)](https://github.com/astral-sh/ruff)
+[![Checked with mypy](https://www.mypy-lang.org/static/mypy_badge.svg)](https://mypy-lang.org/)
+[![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit)](https://github.com/pre-commit/pre-commit)
 [![Semantic Release](https://img.shields.io/badge/semantic--release-enabled-brightgreen)](https://github.com/semantic-release/semantic-release)
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 
@@ -81,6 +84,11 @@ dockhand-guardian/
 # Pull from GitHub Container Registry
 docker pull ghcr.io/strausmann/dockhand-guardian:latest
 
+# Or use specific version
+docker pull ghcr.io/strausmann/dockhand-guardian:1.4.1  # Full version
+docker pull ghcr.io/strausmann/dockhand-guardian:1.4    # Minor version
+docker pull ghcr.io/strausmann/dockhand-guardian:1      # Major version
+
 # Or use in docker-compose.yml
 services:
   guardian:
@@ -107,6 +115,155 @@ services:
    ```bash
    docker compose logs -f guardian
    ```
+
+## 📋 Usage Examples
+
+### Deployment Architecture
+
+> [!TIP] **Recommended:** Run the guardian in a **separate stack** from the monitored containers.
+> This ensures the guardian remains running during recovery operations and can monitor multiple
+> stacks.
+
+> [!NOTE] **Alternative:** You can run the guardian in the same stack as the monitored containers,
+> but be aware that it will be briefly restarted during recovery operations when
+> `docker compose up -d --force-recreate` is executed.
+
+### Docker CLI (Separate Stack - Recommended)
+
+Run guardian as a standalone container monitoring another stack:
+
+```bash
+docker run -d \
+  --name dockhand-guardian \
+  --restart unless-stopped \
+  -v /var/run/docker.sock:/var/run/docker.sock:ro \
+  -v "/path/to/monitored/stack:/stack:ro" \
+  -e MONITORED_CONTAINERS=dockhand-app,dockhand-database \
+  -e GRACE_SECONDS=300 \
+  -e CHECK_INTERVAL=30 \
+  -e COOLDOWN_SECONDS=600 \
+  -e HTTP_CHECKS=dockhand-app=http://dockhand-app:80/health \
+  -e WEBHOOK_URLS=discord://webhook_id/token \
+  ghcr.io/strausmann/dockhand-guardian:latest
+```
+
+### Docker Compose (Separate Stack - Recommended)
+
+**Guardian Stack** (`guardian/docker-compose.yml`):
+
+```yaml
+services:
+  guardian:
+    image: ghcr.io/strausmann/dockhand-guardian:latest
+    container_name: dockhand-guardian
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /path/to/monitored/stack:/stack:ro
+    environment:
+      MONITORED_CONTAINERS: dockhand-app,dockhand-database
+      GRACE_SECONDS: 300
+      CHECK_INTERVAL: 30
+      COOLDOWN_SECONDS: 600
+```
+
+**Monitored Stack** (`app/docker-compose.yml`):
+
+```yaml
+services:
+  dockhand-app:
+    image: nginx:alpine
+    container_name: dockhand-app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  dockhand-database:
+    image: postgres:16-alpine
+    container_name: dockhand-database
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+```
+
+### Docker Compose (Same Stack - Alternative)
+
+**Single Stack** (guardian monitors containers in same compose file):
+
+### Docker Compose (Same Stack - Alternative)
+
+**Single Stack** (guardian monitors containers in same compose file):
+
+> [!WARNING] When using this approach, the guardian will be restarted during recovery operations.
+> Monitoring will be interrupted for a few seconds while the guardian restarts.
+
+```yaml
+services:
+  dockhand-app:
+    image: nginx:alpine
+    container_name: dockhand-app
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  dockhand-database:
+    image: postgres:16-alpine
+    container_name: dockhand-database
+    restart: unless-stopped
+    environment:
+      POSTGRES_PASSWORD: example
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  guardian:
+    image: ghcr.io/strausmann/dockhand-guardian:latest
+    container_name: dockhand-guardian
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - .:/stack:ro
+    environment:
+      MONITORED_CONTAINERS: dockhand-app,dockhand-database
+      GRACE_SECONDS: 300
+      CHECK_INTERVAL: 30
+      COOLDOWN_SECONDS: 600
+      HTTP_CHECKS: dockhand-app=http://dockhand-app:80/
+      WEBHOOK_URLS: discord://webhook_id/token
+```
+
+**Using Docker Compose Secrets:**
+
+```yaml
+services:
+  guardian:
+    image: ghcr.io/strausmann/dockhand-guardian:latest
+    container_name: dockhand-guardian
+    restart: unless-stopped
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - .:/stack:ro
+    environment:
+      MONITORED_CONTAINERS: dockhand-app,dockhand-database
+      GRACE_SECONDS: 300
+      WEBHOOK_URLS_FILE: /run/secrets/webhook_urls
+    secrets:
+      - webhook_urls
+
+secrets:
+  webhook_urls:
+    file: ./secrets/webhook_urls.txt
+```
 
 ## ⚙️ Configuration
 
@@ -252,7 +409,12 @@ docker buildx build --platform linux/amd64,linux/arm64 -t dockhand-guardian .
 
 Docker images are automatically built and published to
 [GitHub Container Registry](https://github.com/strausmann/dockhand-guardian/pkgs/container/dockhand-guardian)
-on every release.
+on every release with semantic version tags:
+
+- `latest` - Always points to the newest release
+- `X.X.X` - Full version (e.g., `1.4.1`)
+- `X.X` - Minor version, updated with patches (e.g., `1.4`)
+- `X` - Major version, updated with minor/patch (e.g., `1`)
 
 ## 💻 Development
 
@@ -262,19 +424,50 @@ on every release.
 - Docker
 - Docker Compose
 
+### Setup
+
+```bash
+# Install dependencies (includes dev tools)
+pip install -e .[dev]
+
+# Install pre-commit hooks
+pre-commit install
+```
+
+### Code Quality Tools
+
+This project uses modern Python tooling:
+
+- **[Ruff](https://docs.astral.sh/ruff/)**: Ultra-fast linter and formatter (10-100x faster than
+  flake8/black/isort)
+- **[mypy](https://mypy-lang.org/)**: Static type checking
+- **[pre-commit](https://pre-commit.com/)**: Automated Git hooks for code quality
+- **[pytest](https://pytest.org/)**: Testing framework with coverage reporting
+
+```bash
+# Lint code
+make lint              # Run ruff checks
+
+# Format code
+make format            # Auto-fix issues and format
+
+# Type check
+make type-check        # Run mypy
+
+# Run tests
+make test              # Run pytest with coverage
+```
+
 ### Running Locally
 
 ```bash
-# Install dependencies
-pip install -e .[dev]
-
 # Set environment variables
 export MONITORED_CONTAINERS=dockhand-app,dockhand-database
 export GRACE_SECONDS=60
 export STACK_DIR=/path/to/your/stack
 
 # Run guardian
-python guardian.py
+python src/guardian.py
 ```
 
 ### Contributing Guidelines
@@ -291,6 +484,13 @@ npm run commit
 # Or commit manually with proper format
 git commit -m "feat(monitoring): add new health check type"
 ```
+
+Pre-commit hooks will automatically:
+
+- Run Ruff linting and formatting
+- Check type hints with mypy
+- Validate YAML files
+- Run tests
 
 See [SCOPES.md](.github/SCOPES.md) for available commit scopes.
 
