@@ -24,7 +24,7 @@ classifiers = [
 dependencies = [
     "docker>=7.0.0",
     "requests>=2.31.0",
-    "apprise>=1.7.0",
+    "apprise>=1.9.9",
 ]
 
 [project.optional-dependencies]
